@@ -1,0 +1,25 @@
+{
+  "name": "@ztwx/http",
+  "version": "0.0.1",
+  "description": "frontend request library dependency rxjs",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "package": "tsc --outDir lib -d"
+  },
+  "author": "zhantewei",
+  "license": "ISC",
+  "dependencies": {
+    "cache-ajax": "^3.0.1",
+    "rxjs":"^6.5.4"
+  },
+  "devDependencies":{
+    "@types/node": "^13.9.8",
+    "@types/webpack-env": "^1.15.1",
+    "tslib": "^1.11.1",
+    "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "rxjs": "^6.5.4"
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "@ztwx/http",
-  "version": "1.0.0",
+  "name": "@voyo/http",
+  "version": "1.0.1",
   "description": "frontend request library dependency rxjs",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,6 +10,10 @@
   },
   "author": "zhantewei",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhantewei2/ztwx-http"
+  },
   "dependencies": {
     "rxjs": "^6.5.5"
   },
@@ -36,5 +40,6 @@
   },
   "sideEffects": [
     "./lib/base/all-one-manage.js"
-  ]
+  ],
+  "keywords": ["http","request","ajax","xhr","xmlhttprequest"]
 }

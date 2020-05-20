@@ -1,14 +1,14 @@
 Install
 ---
 ```
-npm install @ztwx/http
+npm install @voyo/http
 ```
 
 Usage
 ---
 
 ```
-import {Http} from "@ztwx/http";
+import {Http} from "@voyo/http";
 
 const http=new Http();
 

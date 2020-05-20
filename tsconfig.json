@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "target": "es5",
-    "module": "amd",
+    "module": "es6",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -13,7 +13,6 @@
     "sourceMap": false,
     "strictPropertyInitialization": false,
     "types": [
-      "webpack-env",
       "node"
     ],
     "lib": [
@@ -24,9 +23,9 @@
     ]
   },
   "include": [
-    "package/**/*.ts",
+    "package/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules/"
   ]
 }

@@ -1,22 +1,22 @@
 import { Observable, Subject } from "rxjs";
-import { HttpInterface, Params2, ValueChangePostParams, ValueChangeResultParams, RequestResult, HttpCacheXhr } from "./interface";
+import { HttpInterface, Params2, ValueChangePostParams, ValueChangeResultParams, HttpCacheXhr, HttpMethod, BeforeFn, AfterFn } from "./interface";
+import { AllOneHttp } from "./base/all-one-http";
 import { Cache } from "./cache";
-export declare type FilterFn = (result: any, retryFn: any) => Promise<any>;
 export declare class Http implements HttpInterface {
     store: {
         [key: string]: string;
     };
-    cacheHttp: any;
-    beforeFn: any;
-    afterFn: FilterFn;
+    http: AllOneHttp;
+    beforeFn: BeforeFn;
+    afterFn: AfterFn;
     hostUrl: string;
     ticketKey: string;
     ticketValue: string;
     cache: Cache;
     constructor();
     appendTicketHeader: (params2?: Params2) => Params2;
-    setBeforeHandler(fn: (params: Record<any, any>) => void): void;
-    setAfterHandler(fn: (params: RequestResult, retryFn: any) => Promise<any>): void;
+    setBeforeHandler(fn: BeforeFn): void;
+    setAfterHandler(fn: AfterFn): void;
     setHost(host: string): void;
     setTicketKey(key: string): void;
     setTicketValue(v: string): void;
@@ -24,6 +24,6 @@ export declare class Http implements HttpInterface {
     httpReceiveHook: Subject<ValueChangeResultParams>;
     httpReceiveErrorHook: Subject<ValueChangeResultParams>;
     cacheXhr: (params: HttpCacheXhr) => Observable<any>;
-    xhr: (method: string, relativeUrl: string, params?: Record<any, any> | undefined, params2?: Params2 | undefined) => Observable<any>;
+    xhr: (method: HttpMethod, relativeUrl: string, params?: any, params2?: Params2 | undefined) => Observable<any>;
 }
 export declare const http: Http;

@@ -1,3 +1,5 @@
 export * from "./interface";
-export * from "./http";
+export { allOneManage } from "./base/all-one-manage";
+export * from "./base/base-http";
 export * from "./store";
+export * from "./http";

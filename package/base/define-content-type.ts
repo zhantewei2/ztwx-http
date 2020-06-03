@@ -1,11 +1,18 @@
 import { HttpMethod } from "../interface";
 
-export const defineContentType = (method: HttpMethod): string => {
+export const defineContentType = (
+  method: HttpMethod,
+): { targetMethod: HttpMethod; contentType: string } => {
+  let contentType: string;
+  let targetMethod: HttpMethod = method;
   if (method === "postStream") {
-    return "application/octet-stream";
+    contentType = "application/octet-stream";
+    targetMethod = "post";
   } else if (method === "postForm") {
-    return "application/x-www-form-urlencoded";
+    contentType = "application/x-www-form-urlencoded";
+    targetMethod = "post";
   } else {
-    return "application/json";
+    contentType = "application/json";
   }
+  return { targetMethod, contentType };
 };

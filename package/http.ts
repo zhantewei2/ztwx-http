@@ -77,7 +77,7 @@ export class Http implements HttpInterface {
     params2?: Params2,
   ): Observable<any> => {
     const url =
-      params2 && params2.root
+      (params2 && params2.root) || !this.hostUrl
         ? relativeUrl
         : this.hostUrl +
           (relativeUrl.startsWith("/") ? relativeUrl : "/" + relativeUrl);

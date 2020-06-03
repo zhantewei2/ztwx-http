@@ -1,6 +1,6 @@
 {
   "name": "@voyo/http",
-  "version": "1.0.1",
+  "version": "2.0.1",
   "description": "frontend request library dependency rxjs",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -41,5 +41,11 @@
   "sideEffects": [
     "./lib/base/all-one-manage.js"
   ],
-  "keywords": ["http","request","ajax","xhr","xmlhttprequest"]
+  "keywords": [
+    "http",
+    "request",
+    "ajax",
+    "xhr",
+    "xmlhttprequest"
+  ]
 }

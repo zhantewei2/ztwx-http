@@ -1,5 +1,6 @@
 import { Observable, Subject, Subscription } from "rxjs";
 export declare type HttpMethod = "get" | "post" | "put" | "delete" | "update" | "postForm" | "postStream";
+export declare type UniMethod = "get" | "post" | "put" | "delete" | "connect" | "head" | "options" | "trace";
 export interface ValueChangePostParams {
     method: string;
     relativeUrl: string;
@@ -10,11 +11,12 @@ export interface ValueChangePostParams {
 export interface RequestResult {
     status: number;
     content: string;
+    header?: Record<string, string>;
 }
 export interface ValueChangeResultParams extends ValueChangePostParams {
     result: any;
 }
-export declare type Params = Record<string, any> | any;
+export declare type Params = Record<string, any> | string | ArrayBuffer | Blob | any;
 export declare type Headers = Record<string, string>;
 export interface Params2 {
     headers?: {
@@ -58,3 +60,6 @@ export interface AfterFnParams {
 }
 export declare type AfterFn = (afterFnParams: AfterFnParams) => Promise<any>;
 export declare type BeforeFn = (params: Params, params2?: Params2) => void;
+export interface BaseHttpInterface {
+    send: (method: HttpMethod, url: string, params: Params, headers?: Headers) => Observable<RequestResult>;
+}

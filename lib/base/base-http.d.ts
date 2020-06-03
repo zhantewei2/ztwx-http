@@ -1,10 +1,10 @@
-import { HttpMethod, Params, RequestResult, Headers } from "../interface";
+import { HttpMethod, Params, RequestResult, Headers, BaseHttpInterface } from "../interface";
 import { Observable } from "rxjs";
+import { BaseCapacity } from "./base";
+import { BaseHttpUniapp } from "./base-http-uniapp";
 export declare const queryStringify: (obj: any) => string;
-export declare class BaseHttp {
+export declare class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     send(method: HttpMethod, url: string, params: Params, headers?: Headers): Observable<RequestResult>;
-    assemblyHeader(xhr: XMLHttpRequest, headers: Headers): void;
-    isUrlMethod(method: HttpMethod): boolean;
-    isJsonMethod(method: HttpMethod): boolean;
-    sendXhr(xhr: XMLHttpRequest, method: HttpMethod, url: string, params: Params, headers?: Headers): void;
+    private sendXhr;
 }
+export declare const BaseHttp: typeof BaseHttpUniapp;

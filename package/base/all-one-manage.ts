@@ -32,9 +32,7 @@ export class AllOneManage {
     return this.manageQueue.find((i) => i.key === key);
   }
 }
-const win: any = window;
-const allOneManage: AllOneManage = win[AllOneManageKey]
-  ? win[AllOneManageKey]
-  : new AllOneManage();
+
+const allOneManage: AllOneManage = new AllOneManage();
 
 export { allOneManage };

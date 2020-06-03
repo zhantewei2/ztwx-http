@@ -8,6 +8,15 @@ export type HttpMethod =
   | "update"
   | "postForm"
   | "postStream";
+export type UniMethod =
+  | "get"
+  | "post"
+  | "put"
+  | "delete"
+  | "connect"
+  | "head"
+  | "options"
+  | "trace";
 
 export interface ValueChangePostParams {
   method: string;
@@ -20,12 +29,13 @@ export interface ValueChangePostParams {
 export interface RequestResult {
   status: number;
   content: string;
+  header?: Record<string, string>;
 }
 
 export interface ValueChangeResultParams extends ValueChangePostParams {
   result: any;
 }
-export type Params = Record<string, any> | any;
+export type Params = Record<string, any> | string | ArrayBuffer | Blob | any;
 export type Headers = Record<string, string>;
 
 export interface Params2 {
@@ -78,3 +88,12 @@ export interface AfterFnParams {
 
 export type AfterFn = (afterFnParams: AfterFnParams) => Promise<any>;
 export type BeforeFn = (params: Params, params2?: Params2) => void;
+
+export interface BaseHttpInterface {
+  send: (
+    method: HttpMethod,
+    url: string,
+    params: Params,
+    headers?: Headers,
+  ) => Observable<RequestResult>;
+}

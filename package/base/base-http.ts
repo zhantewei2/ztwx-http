@@ -1,7 +1,15 @@
-import { HttpMethod, Params, RequestResult, Headers } from "../interface";
-import { Subscriber, Observable, Subscription } from "rxjs";
-import { error } from "../utils";
+import {
+  HttpMethod,
+  Params,
+  RequestResult,
+  Headers,
+  BaseHttpInterface,
+} from "../interface";
+import { Subscriber, Observable } from "rxjs";
+import { error, isUni } from "../utils";
 import { defineContentType } from "./define-content-type";
+import { BaseCapacity } from "./base";
+import { BaseHttpUniapp } from "./base-http-uniapp";
 
 export const queryStringify = (obj: Params) => {
   if (!obj) return "";
@@ -12,7 +20,7 @@ export const queryStringify = (obj: Params) => {
   return str.slice(0, -1);
 };
 
-export class BaseHttp {
+export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
   send(
     method: HttpMethod,
     url: string,
@@ -31,8 +39,8 @@ export class BaseHttp {
               status: xhr.status,
               content: xhr.responseText,
             });
-            subscriber.complete();
           }
+          subscriber.complete();
         }
       };
       const oldUnsubscribe = subscriber.unsubscribe;
@@ -44,21 +52,8 @@ export class BaseHttp {
       this.sendXhr(xhr, method, url, params, headers);
     });
   }
-  assemblyHeader(xhr: XMLHttpRequest, headers: Headers) {
-    if (!headers) return;
-    const headerKeys: string[] = Object.keys(headers);
-    if (!headerKeys || !headerKeys.length) return;
-    headerKeys.forEach((key) => {
-      xhr.setRequestHeader(key, (headers as any)[key]);
-    });
-  }
-  isUrlMethod(method: HttpMethod): boolean {
-    return method === "get" || method === "delete";
-  }
-  isJsonMethod(method: HttpMethod): boolean {
-    return ["get", "delete", "post", "put", "update"].indexOf(method) >= 0;
-  }
-  sendXhr(
+
+  private sendXhr(
     xhr: XMLHttpRequest,
     method: HttpMethod,
     url: string,
@@ -66,17 +61,19 @@ export class BaseHttp {
     headers?: Headers,
   ) {
     let sendBody: any = "";
-    if (this.isUrlMethod(method)) {
-      xhr.open(method.toUpperCase(), url + queryStringify(params));
+    const { contentType, targetMethod } = defineContentType(method);
+    if (this.isUrlMethod(targetMethod)) {
+      xhr.open(targetMethod.toUpperCase(), url + queryStringify(params));
     } else {
       sendBody = params;
-      xhr.open(method.toUpperCase(), url);
+      xhr.open(targetMethod.toUpperCase(), url);
     }
     headers = headers || {};
-    if (!headers["Content-Type"])
-      headers["Content-Type"] = defineContentType(method);
-
+    if (!headers["Content-Type"]) headers["Content-Type"] = contentType;
     this.assemblyHeader(xhr, headers);
+    xhr.withCredentials = true;
     xhr.send(sendBody);
   }
 }
+
+export const BaseHttp = isUni() ? BaseHttpUniapp : BaseHttpXhr;

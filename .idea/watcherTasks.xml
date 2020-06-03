@@ -16,7 +16,7 @@
       <option name="outputFromStdout" value="false" />
       <option name="program" value="$PROJECT_DIR$/node_modules/.bin/eslint" />
       <option name="runOnExternalChanges" value="false" />
-      <option name="scopeName" value="项目文件" />
+      <option name="scopeName" value="Project Files" />
       <option name="trackOnlyRoot" value="false" />
       <option name="workingDir" value="$FileDir$" />
       <envs />

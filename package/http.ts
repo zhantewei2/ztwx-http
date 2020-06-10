@@ -111,10 +111,16 @@ export class Http implements HttpInterface {
                   result,
                   retry: this.xhr(method, relativeUrl, params, params2),
                 })
-                  .then((resultNext: any) => ob.next(resultNext))
-                  .catch((err) => ob.error(err));
+                  .then((resultNext: any) => {
+                    ob.next(resultNext)
+                    ob.complete();
+                  })
+                  .catch((err) => {
+                    ob.error(err)
+                  });
               } else {
                 ob.next(result);
+                ob.complete();
               }
             }),
         ),

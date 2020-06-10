@@ -3,6 +3,11 @@ Install
 ```
 npm install @voyo/http
 ```
+Info
+---
+- uniapp 中默认使用uni.request。
+
+- 非uniapp环境 使用xmlHttpRequest。
 
 Usage
 ---

@@ -90,7 +90,7 @@ export class Http implements HttpInterface {
     };
 
     this.httpSendBeforeHook.next(valueChangePostParams);
-    this.appendTicketHeader(params2);
+    params2=this.appendTicketHeader(params2);
     this.beforeFn && this.beforeFn(params, params2);
     return this.http
       .xhr({

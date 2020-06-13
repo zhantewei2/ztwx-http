@@ -26,7 +26,7 @@ export class BaseHttpUniapp extends BaseCapacity implements BaseHttpInterface {
         method: targetMethod,
         data: params,
         withCredentials: true,
-        headers: Object.assign(
+        header: Object.assign(
           {
             "content-type": contentType,
           },

@@ -60,6 +60,8 @@ API
     - handle params before request.
 - setAfterHandler
     - handle result after request.
+- setMaxRetry
+    - In the `setAfterHandler`, retry function is called the most times.
 
 ##### setAfterHandler 
 usage
@@ -77,20 +79,14 @@ Automatically fetching the session, and resending the request.
 const getSession=http.xhr("post","/session");
 const handleSession=()=>{}
 http.setAfterHandler(
-    ({result,retry})=>{
-        return new Promise((resolve,reject))=>{
-            if(result.content==="expire"){
-              getSession()
-                .pipe(
-                  mergeMap((sessionResult)=>{
-                      handleSession(sessionResult);
-                      return retry
-                  })
-                ).subscribe((newResult)=>resolve(newResult))
-            }else{
-               resolve(result);
-            }
-       }
+    ({result,retry})=>
+        result.content==="expire"?
+            getSession().pipe(
+                mergeMap(sessionResult=>{
+                    handleSession(sessionResult)
+                    return retry()
+                })).toPromise()
+            :Promise.resolve(result);
     }
 )
 

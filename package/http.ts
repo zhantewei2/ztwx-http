@@ -24,17 +24,18 @@ export class Http implements HttpInterface {
   ticketKey: string;
   ticketValue: string;
   cache: Cache;
-
+  maxRetry:number=4;
   constructor() {
     this.cache = new Cache(this);
   }
 
-  appendTicketHeader = (params2: Params2 = {}): Params2 => {
+  appendParams2 = (params2: Params2 = {}): Params2 => {
     if (this.ticketKey && this.ticketValue) {
       params2.headers = params2.headers || {};
       params2.headers[this.ticketKey] = this.ticketValue;
     }
-
+    if(!params2.retryMax)params2.retryMax=this.maxRetry;
+    if(params2.retryCurrent===undefined)params2.retryCurrent=0;
     return params2;
   };
 
@@ -57,7 +58,9 @@ export class Http implements HttpInterface {
   setTicketValue(v: string) {
     this.ticketValue = v;
   }
-
+  setMaxRetry(v:number){
+    this.maxRetry=v;
+  }
   httpSendBeforeHook: Subject<ValueChangePostParams> = new Subject<
     ValueChangePostParams
   >();
@@ -90,7 +93,8 @@ export class Http implements HttpInterface {
     };
 
     this.httpSendBeforeHook.next(valueChangePostParams);
-    params2=this.appendTicketHeader(params2);
+    params2=this.appendParams2(params2);
+
     this.beforeFn && this.beforeFn(params, params2);
     return this.http
       .xhr({
@@ -104,12 +108,18 @@ export class Http implements HttpInterface {
         mergeMap(
           (result) =>
             new Observable((ob: Subscriber<any>) => {
+              // @ts-ignore
+              if(params2.retryCurrent&&params2.retryCurrent>params2.retryMax)return ob.error("over max retry");
               if (this.afterFn) {
                 this.afterFn({
                   params,
                   params2,
                   result,
-                  retry: this.xhr(method, relativeUrl, params, params2),
+                  retry:()=>{
+                    // @ts-ignore
+                    params2.retryCurrent++;
+                    return this.xhr(method, relativeUrl, params, params2)
+                  },
                 })
                   .then((resultNext: any) => {
                     ob.next(resultNext)

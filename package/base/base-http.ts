@@ -65,7 +65,15 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     if (this.isUrlMethod(targetMethod)) {
       xhr.open(targetMethod.toUpperCase(), url + queryStringify(params));
     } else {
-      sendBody = params;
+      if(contentType==="application/json"){
+        try{
+          sendBody=JSON.stringify(params);
+        }catch (e) {
+          sendBody=params;
+        }
+      }else{
+        sendBody=params;
+      }
       xhr.open(targetMethod.toUpperCase(), url);
     }
     headers = headers || {};

@@ -13,13 +13,15 @@ export declare class Http implements HttpInterface {
     ticketKey: string;
     ticketValue: string;
     cache: Cache;
+    maxRetry: number;
     constructor();
-    appendTicketHeader: (params2?: Params2) => Params2;
+    appendParams2: (params2?: Params2) => Params2;
     setBeforeHandler(fn: BeforeFn): void;
     setAfterHandler(fn: AfterFn): void;
     setHost(host: string): void;
     setTicketKey(key: string): void;
     setTicketValue(v: string): void;
+    setMaxRetry(v: number): void;
     httpSendBeforeHook: Subject<ValueChangePostParams>;
     httpReceiveHook: Subject<ValueChangeResultParams>;
     httpReceiveErrorHook: Subject<ValueChangeResultParams>;

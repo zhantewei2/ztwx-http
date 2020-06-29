@@ -7,4 +7,10 @@ export const warn = (message: string) => {
   console.warn("ztwx-http warn:", message);
 };
 
-export const isUni = (): boolean => !!uni;
+export const isUni = (): boolean =>{
+  try{
+    return !!uni;
+  }catch (e) {
+    return false;
+  }
+};

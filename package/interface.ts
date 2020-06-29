@@ -43,6 +43,8 @@ export interface Params2 {
   expires?: number;
   key?: string;
   root?: string;
+  retryMax?:number;
+  retryCurrent?:number;
 }
 
 export interface HttpInterface {
@@ -83,7 +85,7 @@ export interface AfterFnParams {
   params: Params;
   params2?: Params2;
   result: RequestResult;
-  retry: Observable<any>;
+  retry: ()=>Observable<any>;
 }
 
 export type AfterFn = (afterFnParams: AfterFnParams) => Promise<any>;

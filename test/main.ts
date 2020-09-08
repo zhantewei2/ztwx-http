@@ -1,7 +1,7 @@
 import { AfterFnParams, http } from "../package/index";
 import { mergeMap } from "rxjs/operators";
 
-http.setHost("http://localhost:3000");
+http.setHost("http://www.gohuike.com");
 
 http.setBeforeHandler((params) => {
   if (params) params.name = 2;
@@ -16,25 +16,9 @@ http.setAfterHandler(({ params, result, retry }: AfterFnParams) => {
     /**
      * if session expires ..we can grab session and resend the request
      */
-    if (!once) {
-      once = true;
-      getSession()
-        .pipe(
-          mergeMap((session) => {
-            /**
-             * handle session
-             */
-            return retry;
-          }),
-        )
-        .subscribe(() => {
-          resolve(result);
-        });
-    } else {
-      resolve(result);
-    }
+    resolve(result);
   });
 });
-http.xhr("get", "/", { name: 1 }).subscribe((result) => {
+http.xhr("get", "/api/weixin/common/queryKeyValueOne", { code: 'jd' }).subscribe((result) => {
   console.log(result);
 });

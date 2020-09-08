@@ -35,9 +35,15 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
             error(`connect failure...address: ${url}`);
             subscriber.error({ status: 0, content: "connect failure" });
           } else {
+            let resultContent: any;
+            try {
+              resultContent = JSON.parse(xhr.responseText);
+            } catch (e) {
+              resultContent = xhr.responseText;
+            }
             subscriber.next({
               status: xhr.status,
-              content: xhr.responseText,
+              content: resultContent,
             });
           }
           subscriber.complete();
@@ -65,14 +71,14 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     if (this.isUrlMethod(targetMethod)) {
       xhr.open(targetMethod.toUpperCase(), url + queryStringify(params));
     } else {
-      if(contentType==="application/json"){
-        try{
-          sendBody=JSON.stringify(params);
-        }catch (e) {
-          sendBody=params;
+      if (contentType === "application/json") {
+        try {
+          sendBody = JSON.stringify(params);
+        } catch (e) {
+          sendBody = params;
         }
-      }else{
-        sendBody=params;
+      } else {
+        sendBody = params;
       }
       xhr.open(targetMethod.toUpperCase(), url);
     }

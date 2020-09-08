@@ -1,6 +1,6 @@
 {
   "name": "@voyo/http",
-  "version": "2.1.2",
+  "version": "2.2.5",
   "description": "frontend request library dependency rxjs",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

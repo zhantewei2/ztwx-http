@@ -27,7 +27,9 @@ export class AllOneHttp extends BaseHttp {
   ) {
     if (key) return key;
     if (this.isJsonMethod(method)) {
-      return method + "--" + url + "--" + (params ? JSON.stringify(params) : "");
+      return (
+        method + "--" + url + "--" + (params ? JSON.stringify(params) : "")
+      );
     } else {
       return url;
     }

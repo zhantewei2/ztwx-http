@@ -24,18 +24,17 @@ export class Http implements HttpInterface {
   ticketKey: string;
   ticketValue: string;
   cache: Cache;
-  maxRetry:number=4;
+  maxRetry = 4;
   constructor() {
     this.cache = new Cache(this);
   }
-
   appendParams2 = (params2: Params2 = {}): Params2 => {
     if (this.ticketKey && this.ticketValue) {
       params2.headers = params2.headers || {};
-      params2.headers[this.ticketKey] = this.ticketValue;
+      if (this.ticketValue) params2.headers[this.ticketKey] = this.ticketValue;
     }
-    if(!params2.retryMax)params2.retryMax=this.maxRetry;
-    if(params2.retryCurrent===undefined)params2.retryCurrent=0;
+    if (!params2.retryMax) params2.retryMax = this.maxRetry;
+    if (params2.retryCurrent === undefined) params2.retryCurrent = 0;
     return params2;
   };
 
@@ -58,8 +57,8 @@ export class Http implements HttpInterface {
   setTicketValue(v: string) {
     this.ticketValue = v;
   }
-  setMaxRetry(v:number){
-    this.maxRetry=v;
+  setMaxRetry(v: number) {
+    this.maxRetry = v;
   }
   httpSendBeforeHook: Subject<ValueChangePostParams> = new Subject<
     ValueChangePostParams
@@ -83,7 +82,7 @@ export class Http implements HttpInterface {
       (params2 && params2.root) || !this.hostUrl
         ? relativeUrl
         : this.hostUrl +
-          (relativeUrl.startsWith("/") ? relativeUrl : "/" + relativeUrl);
+          (relativeUrl[0] === "/" ? relativeUrl : "/" + relativeUrl);
     const valueChangePostParams = {
       url,
       relativeUrl,
@@ -93,59 +92,62 @@ export class Http implements HttpInterface {
     };
 
     this.httpSendBeforeHook.next(valueChangePostParams);
-    params2=this.appendParams2(params2);
+    params2 = this.appendParams2(params2);
 
     this.beforeFn && this.beforeFn(params, params2);
-    return this.http
-      .xhr({
-        method,
-        url,
-        params,
-        headers: (params2 || {}).headers,
-        key: (params2 || {}).key,
-      })
-      .pipe(
-        mergeMap(
-          (result) =>
-            new Observable((ob: Subscriber<any>) => {
-              // @ts-ignore
-              if(params2.retryCurrent&&params2.retryCurrent>params2.retryMax)return ob.error("over max retry");
-              if (this.afterFn) {
-                this.afterFn({
-                  params,
-                  params2,
-                  result,
-                  retry:()=>{
-                    // @ts-ignore
-                    params2.retryCurrent++;
-                    return this.xhr(method, relativeUrl, params, params2)
-                  },
+    const httpSub = params2.notQueue
+      ? this.http.send(method, url, params, params2.headers)
+      : this.http.xhr({
+          method,
+          url,
+          params,
+          headers: params2.headers,
+          key: params2.key,
+        });
+    return httpSub.pipe(
+      mergeMap(
+        (result) =>
+          new Observable((ob: Subscriber<any>) => {
+            if (
+              (params2 as any).retryCurrent &&
+              (params2 as any).retryCurrent > (params2 as any).retryMax
+            )
+              return ob.error("over max retry");
+            if (this.afterFn) {
+              this.afterFn({
+                params,
+                params2,
+                result,
+                retry: () => {
+                  (params2 as any).retryCurrent++;
+                  return this.xhr(method, relativeUrl, params, params2);
+                },
+              })
+                .then((resultNext: any) => {
+                  ob.next(resultNext);
+                  ob.complete();
                 })
-                  .then((resultNext: any) => {
-                    ob.next(resultNext)
-                    ob.complete();
-                  })
-                  .catch((err) => {
-                    ob.error(err)
-                  });
-              } else {
-                ob.next(result);
-                ob.complete();
-              }
-            }),
-        ),
-        catchError((err: any) => {
-          this.httpReceiveErrorHook.next(
-            Object.assign(valueChangePostParams, { result: err }),
-          );
-          return throwError(err);
-        }),
-        tap((result: any) => {
-          this.httpReceiveHook.next(
-            Object.assign(valueChangePostParams, { result }),
-          );
-        }),
-      );
+                .catch((err) => {
+                  ob.error(err);
+                });
+            } else {
+              ob.next(result);
+              ob.complete();
+            }
+          }),
+      ),
+      catchError((err: any) => {
+        this.httpReceiveErrorHook.next(
+          Object.assign(valueChangePostParams, { result: err }),
+        );
+        return throwError(err);
+      }),
+      tap((result: any) => {
+        this.httpReceiveHook.next(
+          Object.assign(valueChangePostParams, { result }),
+        );
+      }),
+    );
   };
 }
 

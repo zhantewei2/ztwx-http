@@ -2,3 +2,9 @@ package
 test/
 .idea/
 .DS_Store
+.eslintrc.js
+.eslintignore
+package-lock.json
+prettier.config.js
+yarn.lock
+yarn-error.log

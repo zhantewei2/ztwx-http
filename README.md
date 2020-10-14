@@ -58,11 +58,15 @@ API
     - Set a fixed host url,so that you can use relative paths.
 - setBeforeHandler
     - handle params before request.
-- setAfterHandler
+- setAfterHandler 
     - handle result after request.
-- setMaxRetry
+- setMaxRetry `(num:number):void`
     - In the `setAfterHandler`, retry function is called the most times.
-
+- setGlobalHeader `(key:string,value:string):void`
+    - set the global request header
+- clearGlobalHeader `(key:string):void`
+    - clear the global request header
+    
 ##### setAfterHandler 
 usage
 ```

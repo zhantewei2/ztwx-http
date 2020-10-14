@@ -14,6 +14,15 @@ export declare class Http implements HttpInterface {
     ticketValue: string;
     cache: Cache;
     maxRetry: number;
+    globalHeaders: {
+        [key: string]: string;
+    };
+    setGlobalHeader(key: string, value: string): void;
+    clearGlobalHeader(key: string): void;
+    setGlobalHeaders(headers: {
+        [key: string]: string;
+    }): void;
+    clearGlobalHeaders(): void;
     constructor();
     appendParams2: (params2?: Params2) => Params2;
     setBeforeHandler(fn: BeforeFn): void;

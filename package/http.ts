@@ -25,13 +25,26 @@ export class Http implements HttpInterface {
   ticketValue: string;
   cache: Cache;
   maxRetry = 4;
+  globalHeaders: { [key: string]: string } = {};
+  setGlobalHeader(key: string, value: string) {
+    this.globalHeaders[key] = value;
+  }
+  clearGlobalHeader(key: string) {
+    delete this.globalHeaders[key];
+  }
+  setGlobalHeaders(headers: { [key: string]: string }) {
+    Object.assign(this.globalHeaders, headers);
+  }
+  clearGlobalHeaders() {
+    this.globalHeaders = {};
+  }
   constructor() {
     this.cache = new Cache(this);
   }
   appendParams2 = (params2: Params2 = {}): Params2 => {
     if (this.ticketKey && this.ticketValue) {
-      params2.headers = params2.headers || {};
-      if (this.ticketValue) params2.headers[this.ticketKey] = this.ticketValue;
+      params2.headers = { ...this.globalHeaders, ...(params2.headers || {}) };
+      // if (this.ticketValue) params2.headers[this.ticketKey] = this.ticketValue;
     }
     if (!params2.retryMax) params2.retryMax = this.maxRetry;
     if (params2.retryCurrent === undefined) params2.retryCurrent = 0;
@@ -52,10 +65,13 @@ export class Http implements HttpInterface {
 
   setTicketKey(key: string) {
     this.ticketKey = key;
+    if (this.ticketValue)
+      this.setGlobalHeader(this.ticketKey, this.ticketValue);
   }
 
   setTicketValue(v: string) {
     this.ticketValue = v;
+    if (this.ticketKey) this.setGlobalHeader(this.ticketKey, this.ticketValue);
   }
   setMaxRetry(v: number) {
     this.maxRetry = v;
@@ -104,6 +120,7 @@ export class Http implements HttpInterface {
           headers: params2.headers,
           key: params2.key,
         });
+
     return httpSub.pipe(
       mergeMap(
         (result) =>

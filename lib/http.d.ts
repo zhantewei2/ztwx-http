@@ -1,5 +1,5 @@
 import { Observable, Subject } from "rxjs";
-import { HttpInterface, Params2, ValueChangePostParams, ValueChangeResultParams, HttpCacheXhr, HttpMethod, BeforeFn, AfterFn } from "./interface";
+import { HttpInterface, Params2, ValueChangePostParams, ValueChangeResultParams, HttpCacheXhr, HttpMethod, BeforeFn, AfterFn, HttpOpts, HttpRequestLib } from "./interface";
 import { AllOneHttp } from "./base/all-one-http";
 import { Cache } from "./cache";
 export declare class Http implements HttpInterface {
@@ -17,13 +17,19 @@ export declare class Http implements HttpInterface {
     globalHeaders: {
         [key: string]: string;
     };
-    setGlobalHeader(key: string, value: string): void;
+    globalHeadersPriority: {
+        [key: string]: string;
+    };
+    requestLib: HttpRequestLib;
+    withCredentials: boolean;
+    setWithCredentials(v: boolean): void;
+    setGlobalHeader(key: string, value: string, priority?: boolean): void;
     clearGlobalHeader(key: string): void;
     setGlobalHeaders(headers: {
         [key: string]: string;
     }): void;
     clearGlobalHeaders(): void;
-    constructor();
+    constructor(httpOpts?: HttpOpts);
     appendParams2: (params2?: Params2) => Params2;
     setBeforeHandler(fn: BeforeFn): void;
     setAfterHandler(fn: AfterFn): void;

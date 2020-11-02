@@ -5,7 +5,7 @@
 - relativeUrl: string
 - cacheKey?: string `可选`. 指定缓存键值.相同键值视为同一缓存对象。
 - params?: Params
-- params2?: Params2
+- params2?: [Params2](api.md#params2)
 - expires?: number
     - 设置缓存时间，单位为毫秒
 - destroyOnXhr?: Array<string |RegExp>

@@ -14,8 +14,25 @@ import { BaseHttpUniapp } from "./base-http-uniapp";
 export const queryStringify = (obj: Params) => {
   if (!obj) return "";
   let str = "?";
+  const mapStr: { [key: string]: string } = {
+    "+": "%2B",
+    " ": "%20",
+    "/": "%2F",
+    "?": "%3F",
+    "%": "%25",
+    "#": "%23",
+    "&": "%26",
+    "=": "%3D",
+  };
   for (const i in obj) {
-    str += i + "=" + obj[i] + "&";
+    str +=
+      i +
+      "=" +
+      (obj[i] + "").replace(
+        /\+|\s|\/|\?|%|#|&|=/,
+        (item: string) => mapStr[item],
+      ) +
+      "&";
   }
   return str.slice(0, -1);
 };

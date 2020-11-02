@@ -5,6 +5,8 @@ http请求库
 - [请求头配置](./header.md)
 - [请求预处理](./handler.md)
 - [请求缓存](./cache.md)
+- [API](./api.md)
+- [Rxjs联合用法进阶](./rxjs.md)
 
 ### 简单使用方法
 

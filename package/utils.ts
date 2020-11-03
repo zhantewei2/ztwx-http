@@ -1,16 +1,16 @@
 declare const uni: any;
 export const error = (message: any) => {
-  console.error("ztwx-http error:", message.toString());
+  console.error("ztwx-http error:", message);
 };
 
 export const warn = (message: string) => {
   console.warn("ztwx-http warn:", message);
 };
 
-export const isUni = (): boolean =>{
-  try{
+export const isUni = (): boolean => {
+  try {
     return !!uni;
-  }catch (e) {
+  } catch (e) {
     return false;
   }
 };

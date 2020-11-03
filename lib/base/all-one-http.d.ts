@@ -1,14 +1,17 @@
-import { BaseHttp } from "./base-http";
-import { HttpMethod, Params, Headers, RequestResult } from "../interface";
+import { HttpMethod, Params, Headers, RequestResult, HttpRequestLib, BaseHttpInterface } from "../interface";
 import { Observable } from "rxjs";
+import { BaseCapacity } from "./base";
 export interface AllOneSendOpts {
     method: HttpMethod;
     url: string;
     params: Params;
     headers?: Headers;
     key?: string;
+    withCredentials?: boolean;
 }
-export declare class AllOneHttp extends BaseHttp {
+export declare class AllOneHttp extends BaseCapacity {
+    baseHttp: BaseHttpInterface;
+    constructor(requestLib: HttpRequestLib);
     /***
      * generate unique key
      * @param key
@@ -17,5 +20,5 @@ export declare class AllOneHttp extends BaseHttp {
      * @param params
      */
     generateKey(key: string | undefined, method: HttpMethod, url: string, params: Params): string;
-    xhr: ({ method, url, params, headers, key, }: AllOneSendOpts) => Observable<RequestResult>;
+    xhr: ({ method, url, params, headers, key, withCredentials, }: AllOneSendOpts) => Observable<RequestResult>;
 }

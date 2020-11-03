@@ -10,6 +10,8 @@ import {
   BeforeFn,
   AfterFn,
   Params,
+  HttpOpts,
+  HttpRequestLib,
 } from "./interface";
 import { AllOneHttp } from "./base/all-one-http";
 
@@ -17,7 +19,7 @@ import { Cache } from "./cache";
 
 export class Http implements HttpInterface {
   store: { [key: string]: string } = {};
-  http: AllOneHttp = new AllOneHttp();
+  http: AllOneHttp;
   beforeFn: BeforeFn;
   afterFn: AfterFn;
   hostUrl = "";
@@ -26,8 +28,16 @@ export class Http implements HttpInterface {
   cache: Cache;
   maxRetry = 4;
   globalHeaders: { [key: string]: string } = {};
-  setGlobalHeader(key: string, value: string) {
-    this.globalHeaders[key] = value;
+  globalHeadersPriority: { [key: string]: string } = {};
+  requestLib: HttpRequestLib;
+  withCredentials = true;
+  setWithCredentials(v: boolean) {
+    this.withCredentials = v;
+  }
+  setGlobalHeader(key: string, value: string, priority?: boolean) {
+    priority
+      ? (this.globalHeadersPriority[key] = value)
+      : (this.globalHeaders[key] = value);
   }
   clearGlobalHeader(key: string) {
     delete this.globalHeaders[key];
@@ -38,13 +48,25 @@ export class Http implements HttpInterface {
   clearGlobalHeaders() {
     this.globalHeaders = {};
   }
-  constructor() {
+  constructor(httpOpts?: HttpOpts) {
     this.cache = new Cache(this);
+    this.requestLib = (httpOpts && httpOpts.requestLib) || "auto";
+    this.http = new AllOneHttp(this.requestLib);
   }
   appendParams2 = (params2: Params2 = {}): Params2 => {
     if (this.ticketKey && this.ticketValue) {
-      params2.headers = { ...this.globalHeaders, ...(params2.headers || {}) };
-      // if (this.ticketValue) params2.headers[this.ticketKey] = this.ticketValue;
+      params2.headers = params2.headers || {};
+      params2.headers = params2.priorityHeaders
+        ? {
+            ...this.globalHeaders,
+            ...this.globalHeadersPriority,
+            ...params2.headers,
+          }
+        : {
+            ...this.globalHeaders,
+            ...params2.headers,
+            ...this.globalHeadersPriority,
+          };
     }
     if (!params2.retryMax) params2.retryMax = this.maxRetry;
     if (params2.retryCurrent === undefined) params2.retryCurrent = 0;
@@ -66,12 +88,13 @@ export class Http implements HttpInterface {
   setTicketKey(key: string) {
     this.ticketKey = key;
     if (this.ticketValue)
-      this.setGlobalHeader(this.ticketKey, this.ticketValue);
+      this.setGlobalHeader(this.ticketKey, this.ticketValue, true);
   }
 
   setTicketValue(v: string) {
     this.ticketValue = v;
-    if (this.ticketKey) this.setGlobalHeader(this.ticketKey, this.ticketValue);
+    if (this.ticketKey)
+      this.setGlobalHeader(this.ticketKey, this.ticketValue, true);
   }
   setMaxRetry(v: number) {
     this.maxRetry = v;
@@ -111,14 +134,25 @@ export class Http implements HttpInterface {
     params2 = this.appendParams2(params2);
 
     this.beforeFn && this.beforeFn(params, params2);
+    const withCredentials =
+      params2.withCredentials === undefined
+        ? this.withCredentials
+        : params2.withCredentials;
     const httpSub = params2.notQueue
-      ? this.http.send(method, url, params, params2.headers)
+      ? this.http.baseHttp.send(
+          method,
+          url,
+          params,
+          params2.headers,
+          withCredentials,
+        )
       : this.http.xhr({
           method,
           url,
           params,
           headers: params2.headers,
           key: params2.key,
+          withCredentials,
         });
 
     return httpSub.pipe(

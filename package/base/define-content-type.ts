@@ -9,7 +9,8 @@ export const defineContentType = (
     contentType = "application/octet-stream";
     targetMethod = "post";
   } else if (method === "postForm") {
-    contentType = "application/x-www-form-urlencoded";
+    // contentType = "application/x-www-form-urlencoded";
+    contentType = "";
     targetMethod = "post";
   } else {
     contentType = "application/json";

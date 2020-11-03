@@ -1,7 +1,15 @@
-import { BaseHttp } from "./base-http";
-import { HttpMethod, Params, Headers, RequestResult } from "../interface";
+import { BaseHttp, getBaseHttp } from "./base-http";
+import {
+  HttpMethod,
+  Params,
+  Headers,
+  RequestResult,
+  HttpRequestLib,
+  BaseHttpInterface,
+} from "../interface";
 import { allOneManage, QueueItem } from "./all-one-manage";
 import { Observable, Subject, Subscriber, Subscription } from "rxjs";
+import { BaseCapacity } from "./base";
 
 export interface AllOneSendOpts {
   method: HttpMethod;
@@ -9,9 +17,15 @@ export interface AllOneSendOpts {
   params: Params;
   headers?: Headers;
   key?: string;
+  withCredentials?: boolean;
 }
 
-export class AllOneHttp extends BaseHttp {
+export class AllOneHttp extends BaseCapacity {
+  baseHttp: BaseHttpInterface;
+  constructor(requestLib: HttpRequestLib) {
+    super();
+    this.baseHttp = new (getBaseHttp(requestLib))();
+  }
   /***
    * generate unique key
    * @param key
@@ -41,6 +55,7 @@ export class AllOneHttp extends BaseHttp {
     params,
     headers,
     key,
+    withCredentials,
   }: AllOneSendOpts): Observable<RequestResult> => {
     const xhrKey = this.generateKey(key, method, url, params);
     const existXhr: QueueItem | undefined = allOneManage.exists(xhrKey);
@@ -71,8 +86,8 @@ export class AllOneHttp extends BaseHttp {
           (result) => handleResult(result),
           (err) => handleError(err),
         );
-        runningSubscription = super
-          .send(method, url, params, headers)
+        runningSubscription = this.baseHttp
+          .send(method, url, params, headers, withCredentials)
           .subscribe(
             (result) => subject.next(result),
             (err) => subject.error(err),

@@ -1,5 +1,11 @@
 import { Observable, Subject, Subscription } from "rxjs";
 
+export type HttpRequestLib = "ajax" | "uni" | "auto";
+
+export interface HttpOpts {
+  requestLib: HttpRequestLib; //default "auto
+}
+
 export type HttpMethod =
   | "get"
   | "post"
@@ -28,7 +34,7 @@ export interface ValueChangePostParams {
 
 export interface RequestResult {
   status: number;
-  content: string;
+  content: string | Record<string, any>;
   header?: Record<string, string>;
 }
 
@@ -46,6 +52,8 @@ export interface Params2 {
   retryMax?: number;
   retryCurrent?: number;
   notQueue?: boolean; // not wait queue
+  priorityHeaders?: boolean;
+  withCredentials?: boolean;
 }
 
 export interface HttpInterface {
@@ -53,10 +61,10 @@ export interface HttpInterface {
   setAfterHandler: (fn: AfterFn) => void;
   setTicketKey: (v: string) => void;
   setTicketValue: (v: string) => void;
+  setGlobalHeader: (key: string, value: string, priority?: boolean) => void;
   httpSendBeforeHook: Subject<ValueChangePostParams>;
   httpReceiveHook: Subject<ValueChangeResultParams>;
   httpReceiveErrorHook: Subject<ValueChangeResultParams>;
-
   xhr: (
     method: HttpMethod,
     relativeUrl: string,
@@ -98,5 +106,6 @@ export interface BaseHttpInterface {
     url: string,
     params: Params,
     headers?: Headers,
+    withCredentials?: boolean,
   ) => Observable<RequestResult>;
 }

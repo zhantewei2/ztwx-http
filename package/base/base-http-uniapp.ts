@@ -17,6 +17,7 @@ export class BaseHttpUniapp extends BaseCapacity implements BaseHttpInterface {
     url: string,
     params: Params,
     headers?: Headers,
+    withCredentials?: boolean,
   ): Observable<RequestResult> {
     const { targetMethod, contentType } = defineContentType(method);
 
@@ -25,7 +26,7 @@ export class BaseHttpUniapp extends BaseCapacity implements BaseHttpInterface {
         url,
         method: targetMethod,
         data: params,
-        withCredentials: true,
+        withCredentials,
         header: Object.assign(
           {
             "content-type": contentType,

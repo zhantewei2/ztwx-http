@@ -62,11 +62,12 @@ API
     - handle result after request.
 - setMaxRetry `(num:number):void`
     - In the `setAfterHandler`, retry function is called the most times.
-- setGlobalHeader `(key:string,value:string):void`
+- setGlobalHeader `(key:string,value:string,priority?:boolean):void`
     - set the global request header
+    - @priority Overrides the header for current request if true.default `false`
 - clearGlobalHeader `(key:string):void`
     - clear the global request header
-    
+- setWithCredentials `(v:boolean):void`
 ##### setAfterHandler 
 usage
 ```

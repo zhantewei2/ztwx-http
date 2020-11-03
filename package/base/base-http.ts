@@ -4,6 +4,7 @@ import {
   RequestResult,
   Headers,
   BaseHttpInterface,
+  HttpRequestLib,
 } from "../interface";
 import { Subscriber, Observable } from "rxjs";
 import { error, isUni } from "../utils";
@@ -43,6 +44,7 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     url: string,
     params: Params,
     headers?: Headers,
+    withCredentials?: boolean,
   ): Observable<RequestResult> {
     const xhr = new XMLHttpRequest();
     return new Observable((subscriber: Subscriber<any>) => {
@@ -72,7 +74,7 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
         oldUnsubscribe.call(subscriber);
       };
       (subscriber as any).cancel = () => xhr.abort();
-      this.sendXhr(xhr, method, url, params, headers);
+      this.sendXhr(xhr, method, url, params, headers, withCredentials);
     });
   }
 
@@ -82,6 +84,7 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     url: string,
     params: Params,
     headers?: Headers,
+    withCredentials?: boolean,
   ) {
     let sendBody: any = "";
     const { contentType, targetMethod } = defineContentType(method);
@@ -100,11 +103,22 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
       xhr.open(targetMethod.toUpperCase(), url);
     }
     headers = headers || {};
-    if (!headers["Content-Type"]) headers["Content-Type"] = contentType;
+    if (!headers["Content-Type"] && contentType)
+      headers["Content-Type"] = contentType;
     this.assemblyHeader(xhr, headers);
-    xhr.withCredentials = true;
+    xhr.withCredentials = !!withCredentials;
     xhr.send(sendBody);
   }
 }
 
 export const BaseHttp = isUni() ? BaseHttpUniapp : BaseHttpXhr;
+
+export const getBaseHttp = (requestLib: HttpRequestLib): any => {
+  if (requestLib === "auto") {
+    return isUni() ? BaseHttpUniapp : BaseHttpXhr;
+  } else if (requestLib === "uni") {
+    return BaseHttpUniapp;
+  } else {
+    return BaseHttpXhr;
+  }
+};

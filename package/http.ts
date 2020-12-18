@@ -54,20 +54,19 @@ export class Http implements HttpInterface {
     this.http = new AllOneHttp(this.requestLib);
   }
   appendParams2 = (params2: Params2 = {}): Params2 => {
-    if (this.ticketKey && this.ticketValue) {
-      params2.headers = params2.headers || {};
-      params2.headers = params2.priorityHeaders
-        ? {
-            ...this.globalHeaders,
-            ...this.globalHeadersPriority,
-            ...params2.headers,
-          }
-        : {
-            ...this.globalHeaders,
-            ...params2.headers,
-            ...this.globalHeadersPriority,
-          };
-    }
+    params2.headers = params2.headers || {};
+    params2.headers = params2.priorityHeaders
+      ? {
+          ...this.globalHeaders,
+          ...this.globalHeadersPriority,
+          ...params2.headers,
+        }
+      : {
+          ...this.globalHeaders,
+          ...params2.headers,
+          ...this.globalHeadersPriority,
+        };
+
     if (!params2.retryMax) params2.retryMax = this.maxRetry;
     if (params2.retryCurrent === undefined) params2.retryCurrent = 0;
     return params2;
@@ -111,7 +110,7 @@ export class Http implements HttpInterface {
 
   cacheXhr = (params: HttpCacheXhr) => this.cache.cacheXhr(params);
 
-  xhr = (
+  public xhr = (
     method: HttpMethod,
     relativeUrl: string,
     params?: Params,

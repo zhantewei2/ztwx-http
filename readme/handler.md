@@ -24,4 +24,5 @@ commonHttp.setBeforeHandler((params, params2) => {
     * 此处可以全局处理请求前
     **/
 });
+
 ```

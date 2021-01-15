@@ -13,6 +13,7 @@ export type HttpMethod =
   | "delete"
   | "update"
   | "postForm"
+  | "putForm"
   | "postStream";
 export type UniMethod =
   | "get"

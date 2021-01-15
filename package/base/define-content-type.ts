@@ -12,6 +12,9 @@ export const defineContentType = (
     // contentType = "application/x-www-form-urlencoded";
     contentType = "";
     targetMethod = "post";
+  } else if (method === "putForm") {
+    contentType = "";
+    targetMethod = "put";
   } else {
     contentType = "application/json";
   }

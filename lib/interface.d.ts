@@ -3,7 +3,7 @@ export declare type HttpRequestLib = "ajax" | "uni" | "auto";
 export interface HttpOpts {
     requestLib: HttpRequestLib;
 }
-export declare type HttpMethod = "get" | "post" | "put" | "delete" | "update" | "postForm" | "postStream";
+export declare type HttpMethod = "get" | "post" | "put" | "delete" | "update" | "postForm" | "putForm" | "postStream";
 export declare type UniMethod = "get" | "post" | "put" | "delete" | "connect" | "head" | "options" | "trace";
 export interface ValueChangePostParams {
     method: string;

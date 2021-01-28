@@ -53,7 +53,7 @@ export class Http implements HttpInterface {
     this.requestLib = (httpOpts && httpOpts.requestLib) || "auto";
     this.http = new AllOneHttp(this.requestLib);
   }
-  appendParams2 = (params2: Params2 = {}): Params2 => {
+  appendParams2 = (params2: Params2 = {}, method: HttpMethod): Params2 => {
     params2.headers = params2.headers || {};
     params2.headers = params2.priorityHeaders
       ? {
@@ -69,6 +69,7 @@ export class Http implements HttpInterface {
 
     if (!params2.retryMax) params2.retryMax = this.maxRetry;
     if (params2.retryCurrent === undefined) params2.retryCurrent = 0;
+    params2.isUrlMethod = this.http.isUrlMethod(method);
     return params2;
   };
 
@@ -130,7 +131,7 @@ export class Http implements HttpInterface {
     };
 
     this.httpSendBeforeHook.next(valueChangePostParams);
-    params2 = this.appendParams2(params2);
+    params2 = this.appendParams2(params2, method);
 
     this.beforeFn && this.beforeFn(params, params2);
     const withCredentials =

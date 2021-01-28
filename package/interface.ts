@@ -55,6 +55,7 @@ export interface Params2 {
   notQueue?: boolean; // not wait queue
   priorityHeaders?: boolean;
   withCredentials?: boolean;
+  isUrlMethod?: boolean;
 }
 
 export interface HttpInterface {

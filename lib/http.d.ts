@@ -30,7 +30,7 @@ export declare class Http implements HttpInterface {
     }): void;
     clearGlobalHeaders(): void;
     constructor(httpOpts?: HttpOpts);
-    appendParams2: (params2?: Params2) => Params2;
+    appendParams2: (params2: Params2 | undefined, method: HttpMethod) => Params2;
     setBeforeHandler(fn: BeforeFn): void;
     setAfterHandler(fn: AfterFn): void;
     setHost(host: string): void;

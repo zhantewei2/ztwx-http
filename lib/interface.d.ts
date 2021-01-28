@@ -34,6 +34,7 @@ export interface Params2 {
     notQueue?: boolean;
     priorityHeaders?: boolean;
     withCredentials?: boolean;
+    isUrlMethod?: boolean;
 }
 export interface HttpInterface {
     setBeforeHandler: any;

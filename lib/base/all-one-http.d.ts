@@ -8,6 +8,7 @@ export interface AllOneSendOpts {
     headers?: Headers;
     key?: string;
     withCredentials?: boolean;
+    responseType?: XMLHttpRequestResponseType;
 }
 export declare class AllOneHttp extends BaseCapacity {
     baseHttp: BaseHttpInterface;
@@ -20,5 +21,5 @@ export declare class AllOneHttp extends BaseCapacity {
      * @param params
      */
     generateKey(key: string | undefined, method: HttpMethod, url: string, params: Params): string;
-    xhr: ({ method, url, params, headers, key, withCredentials, }: AllOneSendOpts) => Observable<RequestResult>;
+    xhr: ({ method, url, params, headers, key, withCredentials, responseType, }: AllOneSendOpts) => Observable<RequestResult>;
 }

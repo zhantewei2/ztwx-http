@@ -48,7 +48,12 @@ export class Http implements HttpInterface {
   clearGlobalHeaders() {
     this.globalHeaders = {};
   }
-  getResponseHeaders = () => this.http.baseHttp.getResponseHeader;
+  getResponseHeaders(key: string) {
+    const baseHttp = this.http.baseHttp;
+    return baseHttp.getResponseHeader
+      ? baseHttp.getResponseHeader(key)
+      : undefined;
+  }
   constructor(httpOpts?: HttpOpts) {
     this.cache = new Cache(this);
     this.requestLib = (httpOpts && httpOpts.requestLib) || "auto";

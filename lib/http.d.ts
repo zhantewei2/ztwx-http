@@ -29,7 +29,7 @@ export declare class Http implements HttpInterface {
         [key: string]: string;
     }): void;
     clearGlobalHeaders(): void;
-    getResponseHeaders: () => ((key: string) => string | null) | undefined;
+    getResponseHeaders(key: string): string | null | undefined;
     constructor(httpOpts?: HttpOpts);
     appendParams2: (params2: Params2 | undefined, method: HttpMethod) => Params2;
     setBeforeHandler(fn: BeforeFn): void;

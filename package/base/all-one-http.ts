@@ -18,6 +18,7 @@ export interface AllOneSendOpts {
   headers?: Headers;
   key?: string;
   withCredentials?: boolean;
+  responseType?: XMLHttpRequestResponseType;
 }
 
 export class AllOneHttp extends BaseCapacity {
@@ -56,6 +57,7 @@ export class AllOneHttp extends BaseCapacity {
     headers,
     key,
     withCredentials,
+    responseType,
   }: AllOneSendOpts): Observable<RequestResult> => {
     const xhrKey = this.generateKey(key, method, url, params);
     const existXhr: QueueItem | undefined = allOneManage.exists(xhrKey);
@@ -87,7 +89,7 @@ export class AllOneHttp extends BaseCapacity {
           (err) => handleError(err),
         );
         runningSubscription = this.baseHttp
-          .send(method, url, params, headers, withCredentials)
+          .send(method, url, params, headers, withCredentials, responseType)
           .subscribe(
             (result) => subject.next(result),
             (err) => subject.error(err),

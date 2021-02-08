@@ -28,8 +28,10 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     params: Params,
     headers?: Headers,
     withCredentials?: boolean,
+    responseType?: XMLHttpRequestResponseType,
   ): Observable<RequestResult> {
     const xhr = new XMLHttpRequest();
+    if (responseType) xhr.responseType = responseType;
     return new Observable((subscriber: Subscriber<any>) => {
       xhr.onload = () => {
         if (xhr.readyState == 4) {
@@ -38,11 +40,17 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
             subscriber.error({ status: 0, content: "connect failure" });
           } else {
             let resultContent: any;
-            try {
-              resultContent = JSON.parse(xhr.responseText);
-            } catch (e) {
-              resultContent = xhr.responseText;
+
+            if (responseType && responseType !== "text") {
+              resultContent = xhr.response;
+            } else {
+              try {
+                resultContent = JSON.parse(xhr.responseText);
+              } catch (e) {
+                resultContent = xhr.responseText;
+              }
             }
+
             subscriber.next({
               status: xhr.status,
               content: resultContent,

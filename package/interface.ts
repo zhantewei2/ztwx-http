@@ -56,6 +56,7 @@ export interface Params2 {
   priorityHeaders?: boolean;
   withCredentials?: boolean;
   isUrlMethod?: boolean;
+  responseType?: XMLHttpRequestResponseType;
 }
 
 export interface HttpInterface {
@@ -109,5 +110,6 @@ export interface BaseHttpInterface {
     params: Params,
     headers?: Headers,
     withCredentials?: boolean,
+    responseType?: XMLHttpRequestResponseType,
   ) => Observable<RequestResult>;
 }

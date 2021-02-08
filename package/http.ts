@@ -145,6 +145,7 @@ export class Http implements HttpInterface {
           params,
           params2.headers,
           withCredentials,
+          params2.responseType,
         )
       : this.http.xhr({
           method,
@@ -153,6 +154,7 @@ export class Http implements HttpInterface {
           headers: params2.headers,
           key: params2.key,
           withCredentials,
+          responseType: params2.responseType,
         });
 
     return httpSub.pipe(

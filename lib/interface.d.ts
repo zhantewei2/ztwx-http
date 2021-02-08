@@ -74,4 +74,5 @@ export declare type AfterFn = (afterFnParams: AfterFnParams) => Promise<any>;
 export declare type BeforeFn = (params: Params, params2?: Params2) => void;
 export interface BaseHttpInterface {
     send: (method: HttpMethod, url: string, params: Params, headers?: Headers, withCredentials?: boolean, responseType?: XMLHttpRequestResponseType) => Observable<RequestResult>;
+    getResponseHeader?: (key: string) => string | null;
 }

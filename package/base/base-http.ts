@@ -22,6 +22,7 @@ export const queryStringify = (obj: Params) => {
 };
 
 export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
+  xhr: XMLHttpRequest;
   send(
     method: HttpMethod,
     url: string,
@@ -34,6 +35,7 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     if (responseType) xhr.responseType = responseType;
     return new Observable((subscriber: Subscriber<any>) => {
       xhr.onload = () => {
+        this.setXhr(xhr);
         if (xhr.readyState == 4) {
           if (xhr.status === 0) {
             error(`connect failure...address: ${url}`);
@@ -99,6 +101,14 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     this.assemblyHeader(xhr, headers);
     xhr.withCredentials = !!withCredentials;
     xhr.send(sendBody);
+  }
+
+  private setXhr(xhr: XMLHttpRequest) {
+    this.xhr = xhr;
+  }
+
+  getResponseHeader(key: string) {
+    return this.xhr.getResponseHeader(key);
   }
 }
 

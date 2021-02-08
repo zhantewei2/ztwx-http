@@ -112,4 +112,5 @@ export interface BaseHttpInterface {
     withCredentials?: boolean,
     responseType?: XMLHttpRequestResponseType,
   ) => Observable<RequestResult>;
+  getResponseHeader?: (key: string) => string | null;
 }

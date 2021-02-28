@@ -128,18 +128,19 @@ export class Http implements HttpInterface {
         ? relativeUrl
         : this.hostUrl +
           (relativeUrl[0] === "/" ? relativeUrl : "/" + relativeUrl);
+    const paramsCopy = JSON.parse(JSON.stringify(params));
     const valueChangePostParams = {
       url,
       relativeUrl,
       method,
-      params,
+      params: paramsCopy,
       params2,
     };
 
     this.httpSendBeforeHook.next(valueChangePostParams);
     params2 = this.appendParams2(params2, method);
 
-    this.beforeFn && this.beforeFn(params, params2);
+    this.beforeFn && this.beforeFn(paramsCopy, params2);
     const withCredentials =
       params2.withCredentials === undefined
         ? this.withCredentials
@@ -148,7 +149,7 @@ export class Http implements HttpInterface {
       ? this.http.baseHttp.send(
           method,
           url,
-          params,
+          paramsCopy,
           params2.headers,
           withCredentials,
           params2.responseType,
@@ -156,7 +157,7 @@ export class Http implements HttpInterface {
       : this.http.xhr({
           method,
           url,
-          params,
+          params: paramsCopy,
           headers: params2.headers,
           key: params2.key,
           withCredentials,
@@ -174,12 +175,12 @@ export class Http implements HttpInterface {
               return ob.error("over max retry");
             if (this.afterFn) {
               this.afterFn({
-                params,
+                params: paramsCopy,
                 params2,
                 result,
                 retry: () => {
                   (params2 as any).retryCurrent++;
-                  return this.xhr(method, relativeUrl, params, params2);
+                  return this.xhr(method, relativeUrl, paramsCopy, params2);
                 },
               })
                 .then((resultNext: any) => {

@@ -83,7 +83,7 @@ export class Cache {
         cacheDestroy.xhrLoad = undefined;
       }),
       catchError((err) => {
-        cacheDestroy.cacheValue = err;
+        cacheDestroy.cacheValue = `err:${err}`;
         cacheDestroy.xhrLoad?.next(`err:${err}`);
         cacheDestroy.xhrLoad = undefined;
         throw err;

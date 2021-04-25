@@ -90,7 +90,7 @@ export interface CacheDestroyXhrObject {
   key: string;
   matchedDestroyFn?: (url: string) => boolean;
   subscription?: Subscription;
-  cacheValue: string;
+  cacheValue: string | Record<string, any>;
   xhrLoad?: Subject<any>;
 }
 export interface AfterFnParams {

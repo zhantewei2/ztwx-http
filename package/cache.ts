@@ -5,8 +5,8 @@ import {
   CacheDestroyXhrObject,
 } from "./interface";
 import { Store } from "./store";
-import { Observable, Subscription, of, Subject } from "rxjs";
-import { tap } from "rxjs/operators";
+import { Observable, Subscription, of, Subject, throwError } from "rxjs";
+import { catchError, tap } from "rxjs/operators";
 
 export class Cache {
   private cacheExpireTag = "ztwx-http-cache-expire-tag";
@@ -46,8 +46,12 @@ export class Cache {
         return existsCacheDestroyDict.xhrLoad;
       } else {
         const resultValue = existsCacheDestroyDict.cacheValue;
-        if (resultValue !== undefined && resultValue != this.cacheExpireTag)
+        if (resultValue !== undefined && resultValue != this.cacheExpireTag) {
+          if (typeof resultValue === "string" && resultValue.includes("err:")) {
+            throwError(resultValue.split("err:")[1]);
+          }
           return of(resultValue);
+        }
       }
     }
 
@@ -77,6 +81,12 @@ export class Cache {
         cacheDestroy.cacheValue = result;
         cacheDestroy.xhrLoad?.next(result);
         cacheDestroy.xhrLoad = undefined;
+      }),
+      catchError((err) => {
+        cacheDestroy.cacheValue = err;
+        cacheDestroy.xhrLoad?.next(`err:${err}`);
+        cacheDestroy.xhrLoad = undefined;
+        throw err;
       }),
     );
   }

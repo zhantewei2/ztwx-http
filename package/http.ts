@@ -128,9 +128,9 @@ export class Http implements HttpInterface {
         ? relativeUrl
         : this.hostUrl +
           (relativeUrl[0] === "/" ? relativeUrl : "/" + relativeUrl);
-    let paramsCopy: Params = params;
+    let paramsCopy: Params = params ?? {};
     if (Object.prototype.toString.call(paramsCopy) === "[object Object]") {
-      paramsCopy = JSON.parse(JSON.stringify(params));
+      paramsCopy = JSON.parse(JSON.stringify(paramsCopy));
     }
     const valueChangePostParams = {
       url,

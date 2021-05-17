@@ -1,9 +1,9 @@
 {
   "name": "@voyo/http",
-  "version": "2.5.1",
+  "version": "3.0.0-alpha",
   "description": "frontend request library dependency rxjs",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "module": "lib/index.module.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "package": "tsc --outDir lib -d",
     "test-dev": "cross-env NODE_ENV=development webpack serve --config  test/webpack.config.js",
@@ -26,6 +26,7 @@
     "@types/webpack-env": "^1.16.0",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
     "cross-env": "^7.0.3",
     "eslint": "^7.26.0",
     "eslint-config-google": "^0.14.0",

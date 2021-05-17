@@ -3,161 +3,138 @@ Install
 ```
 npm install @voyo/http
 ```
-Info
----
-- uniapp中，使用 `uni.request` 进行请求。
-
-- 非uniapp环境 使用 `xmlHttpRequest` 进行请求。
 
 Usage
 ---
-
 ```
-import {Http} from "@voyo/http";
+import {VoyoHttp} from "@voyo/http";
 
-const http=new Http();
+const http=new VoyoHttp({});
+http.initPlugin();
 
-//get
-http.xhr("get","http://localhost:3000",{p:1})
-    .subscribe(
-        result=>{},
-        err=>{}
-    )
-//post
-http.xhr("post","http://localhost:3000",{p:1})
-    .subscribe(
-        result=>{},
-        err=>{}
-    )
+http.xhr({
+  method:"get",
+  url:"http://localhost:3000/hello"
+}).subscribe(
+  result=>console.log(result),
+  err=>console.error(err)
+)
 ```
 
-Capacity
+#### JSON
+
+```
+http.xhr({
+  method:"post",
+  url,
+  json:{
+    "findId":"xxx"
+  }
+})
+```
+
+#### queryParams
+
+```
+http.xhr({
+  method:"get",
+  url,
+  query:{
+    "findId":"xxx"
+  }
+})
+```
+
+#### download
+```
+http.xhr({
+  method:"post",
+  url,
+  responseType:"ArrayBuffer",
+})
+```
+
+#### upload formData
+```
+http.xhr({
+  method:"post",
+  url,
+  formData
+})
+```
+
+#### upload blob
+```
+http.xhr({
+  method:"post",
+  url,
+  blob
+})
+```
+
+In Project
 ---
-
-- **Auto prevent duplicate request**. 
-
-If the request is progress.
-The same request will prevent the previous `Subscription`, 
-and only newly created `subscription` are retained.
-
-During this process.
-There is always only one HTTP request.
-   
-- `cacheXhr` cache request.
-
-Create a cache request. You can get data from cache, if the cache does not expire.
-[API cacheXhr](#cacheXhr)
-
-API
----
-### Http
-- setTicketKey
-    - Set one global http header as a ticket key.
-- setTicketValue
-- **setHost**  
-    - Set a fixed host url,so that you can use relative paths.
-- setBeforeHandler
-    - handle params before request.
-- setAfterHandler 
-    - handle result after request.
-- setMaxRetry `(num:number):void`
-    - In the `setAfterHandler`, retry function is called the most times.
-- setGlobalHeader `(key:string,value:string,priority?:boolean):void`
-    - set the global request header
-    - @priority Overrides the header for current request if true.default `false`
-- clearGlobalHeader `(key:string):void`
-    - clear the global request header
-- setWithCredentials `(v:boolean):void`
-##### setAfterHandler 
-usage
-```
-type AfterFn = (afterFnParams: AfterFnParams) => Promise<any>;
-
-setAfterHandler=(fn: AfterFn)=>void;
-```
 example
+```
+import {VoyoHttp} from "@voyo/http";
+const http=new VoyoHttp({});
+http.initPlugin();
 
-This is an example of dealing with session expiration.
-Automatically fetching the session, and resending the request.
+http.setHost("http://localhost:3000");
+// login example
+http.xhr({
+  method:"post",
+  path:"/login",
+  json:{
+    account:"xx",
+    pswd:"xx"
+  }
+})
+.toPromise()
+.then(({result,statusCode})=>{
+  if(statusCode===200){
+    http.setGlobalHeader("user-auth-token",result.token);
+  }
+})
 
-```js
-const getSession=http.xhr("post","/session");
-const handleSession=()=>{}
-http.setAfterHandler(
-    ({result,retry})=>
-        result.content==="expire"?
-            getSession().pipe(
-                mergeMap(sessionResult=>{
-                    handleSession(sessionResult)
-                    return retry()
-                })).toPromise()
-            :Promise.resolve(result);
-    }
-)
 
+// query example
+http.xhr({
+  method: "get",
+  path: "/query",
+  query: {id:"01"}
+})
+.toPromise()
+.then(({result})=>{
+  console.log(result);
+})
 ```
 
-### Http.xhr
-```
-http.xhr(
-    HttpMethod,
-    relativeUrl,
-    Params,
-    Params2
-)
 
-```
-
-### <span id="cacheXhr">Http.cacheXhr</span>
-usage
-```
-http.cacheXhr=(p:HttpCacheXhr)=>Observable;
-```
-##### HttpCacheXhr
-- method: HttpMethod
-- relativeUrl: string
-- cacheKey?: string
-- params?: Params
-- params2?: Params2
-- expires?: number
-    - Destroy the cache when it expires
-- destroyOnXhr?: Array<string |RegExp>
-    - Destroy the cache when a matching `url` request is triggered.
-    
-RXJS
+Plugin
 ---
-retry request
-```js
-http.xhr(...)
-    .pipe(retry(5))
-    .subscribe(...)
+```javascript
+import {VoyoHttp} from "@voyo/http";
+
+const http=new VoyoHttp({});
+
+http.addPlugin({
+  name: PLUGIN_NAME,
+  priority: PLUGIN_PRIORITY
+})
+
+http.initPlugin();
 ```
-toPromise
-```js
-http.xhr(...)
-    .toPromise()
-    .then(...)
-```
-delay request 
-```js
-http.xhr(...)
-    .pipe(delay(100))
-    .subscribe(...)
-```
-timeout request
-```js
-http.xhr(...)
-    .pipe(timeout(4000))
-    .subscribe(()=>{},err=>{})
-```
-forkJoin multiple request
-```js
-const a=http.xhr(...)
-const b=http.xhr(...)
-const c=http.xhr(...)
-forkJoin({
-    a,b,c
-}).subscribe(v=>console.log(v);
-// Logs:
-// {a:xxx,b:xxx,c:xxx}
+
+- VoyoHttpPlugin
+```typescript
+export interface VoyoHttpPlugin {
+  priority: number; //Sort order
+  name: string;
+  patchCall?(self: any): void; //Rewrite http.
+  before?(params: HttpBeforeParams): Promise<void>; // Http hook.
+  registryHooks?(params: HttpApplyParams): void; // Http basic life hooks.
+  after?(params: HttpAfterParams): Promise<void>; // Http hook
+  wrapper?(params: HttpWrapperParams): Observable<HttpSuccessResult>; // Observer hook;
+}
 ```

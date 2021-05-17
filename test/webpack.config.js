@@ -1,11 +1,13 @@
 const path=require("path");
 const HtmlWebpackPlugin=require("html-webpack-plugin");
-
-const join=(...args)=>path.join(__dirname,...args);
+const join=(...args)=>path.join(process.cwd(),...args);
 
 module.exports={
-    mode:"development",
-    entry:join("main.ts"),
+    mode:env,
+    devServer:{
+        port:8080,
+    },
+    entry:join("test/main.ts"),
     output:{
         path:join("dist"),
         filename: "[name].js"
@@ -20,8 +22,5 @@ module.exports={
     },
     plugins:[
         new HtmlWebpackPlugin({})
-    ],
-    devServer:{
-        port:8400
-    }
+    ]
 };

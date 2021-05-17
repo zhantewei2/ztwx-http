@@ -12,6 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": false,
     "strictPropertyInitialization": false,
+    "declaration": true,
+    "outDir": "types",
     "types": [
       "node"
     ],

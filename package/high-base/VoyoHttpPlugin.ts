@@ -103,6 +103,7 @@ export class VoyoHttpPluginManager {
       this.httpPluginHandlers.afterCompletionAsync.run(p);
     http.hooks.errorTrigger = (p) =>
       this.httpPluginHandlers.errorTrigger.run(p);
+    Object.freeze(http.hooks);
 
     return fromPromise(this.beforeHandlerAsync.run({ http, httpParams })).pipe(
       mergeMap(() => {

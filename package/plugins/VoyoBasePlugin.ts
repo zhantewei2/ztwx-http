@@ -32,8 +32,8 @@ declare module "../types/http-params.type" {
     responseType?: XMLHttpRequestResponseType;
   }
   interface HttpSuccessResult {
-    result: HttpResult;
-    statusCode: number;
+    result?: HttpResult;
+    statusCode?: number;
   }
 }
 declare module "../high-base/HighHttp" {

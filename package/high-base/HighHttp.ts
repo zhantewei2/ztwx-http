@@ -18,9 +18,9 @@ export class HighHttp extends VoyoHttpPluginManager {
    * Http library init.
    * This method must be called before invoking xhr.
    */
-  init() {
-    this.initPlugin();
-  }
+  // init() {
+  //   this.initPlugin();
+  // }
 
   /**
    *

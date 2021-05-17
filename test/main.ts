@@ -1,24 +1,30 @@
-import { AfterFnParams, http } from "../package/index";
-import { mergeMap } from "rxjs/operators";
+import { VoyoHttp } from "../lib/index.js";
 
-http.setHost("http://www.gohuike.com");
+document.body.innerHTML = `
+<div>
+    <button id="sendBtn">send</button>    
+</div>
+`;
+const sendBtn: HTMLElement = document.body.querySelector(
+  "#sendBtn",
+) as HTMLElement;
 
-http.setBeforeHandler((params) => {
-  if (params) params.name = 2;
-});
+const http = new VoyoHttp({});
 
-const getSession = () => http.xhr("get", "/session");
+http.initPlugin();
+http.setHost("http://localhost:3000");
+http.setGlobalHeader("ztwx-auth", "ztwx", 1);
 
-let once = false;
-http.setAfterHandler(({ params, result, retry }: AfterFnParams) => {
-  console.log("send after");
-  return new Promise<any>((resolve, reject) => {
-    /**
-     * if session expires ..we can grab session and resend the request
-     */
-    resolve(result);
-  });
-});
-http.xhr("get", "/api/weixin/common/queryKeyValueOne", { code: 'jd' }).subscribe((result) => {
-  console.log(result);
-});
+sendBtn.onclick = () => {
+  http
+    .xhr({
+      method: "post",
+      path: "/bibi",
+      json: {
+        xx: "xxxx",
+      },
+    })
+    .subscribe((result: any) => {
+      console.log(result);
+    });
+};

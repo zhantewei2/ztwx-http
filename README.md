@@ -6,7 +6,7 @@ npm install @voyo/http
 
 Usage
 ---
-```
+```javascript
 import {VoyoHttp} from "@voyo/http";
 
 const http=new VoyoHttp({});
@@ -23,7 +23,7 @@ http.xhr({
 
 #### JSON
 
-```
+```javascript
 http.xhr({
   method:"post",
   url,
@@ -35,7 +35,7 @@ http.xhr({
 
 #### queryParams
 
-```
+```javascript
 http.xhr({
   method:"get",
   url,
@@ -46,7 +46,7 @@ http.xhr({
 ```
 
 #### download
-```
+```javascript
 http.xhr({
   method:"post",
   url,
@@ -55,7 +55,7 @@ http.xhr({
 ```
 
 #### upload formData
-```
+```javascript
 http.xhr({
   method:"post",
   url,
@@ -64,7 +64,7 @@ http.xhr({
 ```
 
 #### upload blob
-```
+```javascript
 http.xhr({
   method:"post",
   url,
@@ -75,12 +75,14 @@ http.xhr({
 In Project
 ---
 example
-```
+```javascript
 import {VoyoHttp} from "@voyo/http";
 const http=new VoyoHttp({});
 http.initPlugin();
 
+// configure the global requested domain.
 http.setHost("http://localhost:3000");
+
 // login example
 http.xhr({
   method:"post",
@@ -138,3 +140,4 @@ export interface VoyoHttpPlugin {
   wrapper?(params: HttpWrapperParams): Observable<HttpSuccessResult>; // Observer hook;
 }
 ```
+

@@ -26,7 +26,7 @@ export class HighHttp extends VoyoHttpPluginManager {
    *
    * @param params
    */
-  xhr(params: HttpParams) {
+  xhr(params: HttpParams): Observable<HttpSuccessResult> {
     if (!this.transmitter) throw new Exception("Must specify an transmitter.");
     const http = new Http();
     http.req.url = params.url || "";

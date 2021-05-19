@@ -80,7 +80,9 @@ import {VoyoHttp} from "@voyo/http";
 const http=new VoyoHttp({});
 http.initPlugin();
 
+// configure the global requested domain.
 http.setHost("http://localhost:3000");
+
 // login example
 http.xhr({
   method:"post",

@@ -32,7 +32,6 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     responseType?: XMLHttpRequestResponseType,
   ): Observable<RequestResult> {
     const xhr = new XMLHttpRequest();
-    if (responseType) xhr.responseType = responseType;
     return new Observable((subscriber: Subscriber<any>) => {
       xhr.onload = () => {
         this.setXhr(xhr);
@@ -67,7 +66,15 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
         oldUnsubscribe.call(subscriber);
       };
       (subscriber as any).cancel = () => xhr.abort();
-      this.sendXhr(xhr, method, url, params, headers, withCredentials);
+      this.sendXhr(
+        xhr,
+        method,
+        url,
+        params,
+        headers,
+        withCredentials,
+        responseType,
+      );
     });
   }
 
@@ -78,6 +85,7 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
     params: Params,
     headers?: Headers,
     withCredentials?: boolean,
+    responseType?: XMLHttpRequestResponseType,
   ) {
     let sendBody: any = "";
     const { contentType, targetMethod } = defineContentType(method);
@@ -95,6 +103,7 @@ export class BaseHttpXhr extends BaseCapacity implements BaseHttpInterface {
       }
       xhr.open(targetMethod.toUpperCase(), url);
     }
+    if (responseType) xhr.responseType = responseType;
     headers = headers || {};
     if (!headers["Content-Type"] && contentType)
       headers["Content-Type"] = contentType;

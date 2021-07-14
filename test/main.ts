@@ -1,4 +1,4 @@
-import { VoyoHttp } from "../lib/index.js";
+import { VoyoHttp } from "../package/index";
 
 document.body.innerHTML = `
 <div>
@@ -12,7 +12,7 @@ const sendBtn: HTMLElement = document.body.querySelector(
 const http = new VoyoHttp({});
 
 http.initPlugin();
-http.setHost("http://localhost:3000");
+http.setHost("http://localhost:5000");
 http.setGlobalHeader("ztwx-auth", "ztwx", 1);
 
 sendBtn.onclick = () => {
@@ -24,7 +24,7 @@ sendBtn.onclick = () => {
         xx: "xxxx",
       },
     })
-    .subscribe((result: any) => {
+    .subscribe(({result,statusCode}) => {
       console.log(result);
     });
 };

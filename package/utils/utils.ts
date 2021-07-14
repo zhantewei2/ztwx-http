@@ -14,8 +14,12 @@ export const arrRunAsync = (
   arr: Array<(next: (nextParams?: any) => void, preParams?: any) => any>,
   params?: any,
 ) => {
-  arr.length &&
+  try {
+    arr.length &&
     arr[0]((nextParams) => arrRunAsync(arr.slice(1), nextParams), params);
+  }catch (e) {
+    console.error(e);
+  }
 };
 
 export const arrForEachAsync = (

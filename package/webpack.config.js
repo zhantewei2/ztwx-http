@@ -1,6 +1,5 @@
 const path=require("path");
 const join=(...args)=>path.join(process.cwd(),...args);
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const libraryName="voyoHttp";
 module.exports={
   mode:"production",
@@ -29,7 +28,11 @@ module.exports={
   experiments: {
     outputModule: true
   },
+  optimization:{
+    sideEffects:true
+  },
   output:{
+    clean:true,
     path:join("lib"),
     filename: "index.[name].js",
   },
@@ -47,7 +50,5 @@ module.exports={
   resolve: {
     extensions: [".ts",".js"]
   },
-  plugins: [
-    new CleanWebpackPlugin()
-  ]
+  plugins: []
 };

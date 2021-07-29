@@ -1,10 +1,11 @@
 const http=require("http");
 
 http.createServer((req,res)=>{
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    console.log(req.headers)
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
     res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS,GET");
     res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Headers","*");
+    res.setHeader("Access-Control-Allow-Headers","content-type,ztwx-auth");
     let buffer;
     res.setHeader("ztwx","xx");
     req.on("data",chunk=>{
@@ -13,4 +14,4 @@ http.createServer((req,res)=>{
     req.on("end",()=>{
         res.end(JSON.stringify({"result":"hello"}));
     })
-}).listen(3000);
+}).listen(5000);

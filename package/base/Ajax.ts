@@ -36,7 +36,7 @@ export class Ajax implements HttpTransmitter {
            * config
            */
           if (req.timeout) xhr.timeout = req.timeout; // XHR timeout.
-          if (req.responseType) xhr.responseType = req.responseType; // XHR responseType.
+
           if (req.withCredentials) xhr.withCredentials = req.withCredentials; // XHR withCredentials.
           /**
            * life Hook
@@ -74,7 +74,13 @@ export class Ajax implements HttpTransmitter {
           );
 
           patchUnsubscribe(ob, () => xhr.abort());
+
+
           xhr.open(req.method, req.url);
+          /**
+           * Don't put line in front of `xhr.open` .. IE say.
+           */
+          if (req.responseType) xhr.responseType = req.responseType; // XHR responseType.
           /**
            * config headers
            */

@@ -8,3 +8,4 @@ package-lock.json
 prettier.config.js
 yarn.lock
 yarn-error.log
+package-lock.json

@@ -20,6 +20,19 @@ http.xhr({
   err=>console.error(err)
 )
 ```
+for weixin-mp
+```javascript
+import {VoyoHttp,Weixin} from "@voyo/http";
+
+const http=new VoyoHttp({
+  transmitter: new Weixin()
+});
+http.initPlugin();
+```
+
+
+Request Example
+---
 
 #### JSON
 

@@ -31,6 +31,7 @@ declare module "../types/http-params.type" {
     body?: BodyInit;
     responseType?: XMLHttpRequestResponseType;
     withCredentials?: boolean;
+    noAutoHeader?: boolean;
   }
   interface HttpSuccessResult {
     result?: HttpResult;
@@ -41,7 +42,7 @@ declare module "../high-base/HighHttp" {
   interface HighHttp {
     setHost(v: string): void;
     setGlobalHeader(k: string, v: any, priority?: number): void;
-    setWithCredentials(v:boolean):void;
+    setWithCredentials(v: boolean): void;
   }
 }
 
@@ -50,7 +51,7 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
   priority = 100;
   hostAddress: string;
   globalPriorityHeaders: PriorityHeaders = new PriorityHeaders({});
-  withCredentials:boolean= true;
+  withCredentials = true;
   public defaultContentType = "application/json";
   public defaultResponseType: XMLHttpRequestResponseType = "json";
 
@@ -65,7 +66,7 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
     highHttp.setGlobalHeader = (key: string, value: any, priority?: number) => {
       this.globalPriorityHeaders.add({ key, value, priority });
     };
-    highHttp.setWithCredentials=(v:boolean)=>this.withCredentials=v;
+    highHttp.setWithCredentials = (v: boolean) => (this.withCredentials = v);
   }
   defineResponseType(httpParams: HttpParams, req: Request) {
     req.responseType = httpParams.responseType || this.defaultResponseType;
@@ -85,7 +86,7 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
     req.headers = req.headers || {};
     this.defineRequestUrl(httpParams, req);
     this.defineResponseType(httpParams, req);
-    req.withCredentials=httpParams.withCredentials??this.withCredentials;
+    req.withCredentials = httpParams.withCredentials ?? this.withCredentials;
     const priorityHeader = new PriorityHeaders(
       Object.assign(headers, req.headers),
       priorityHeaders,
@@ -103,21 +104,23 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
           nullishCoalescing(httpParams.queryURIEncode, true),
         );
     }
-    if (httpParams.json) {
-      priorityHeader.addType("application/json");
-      req.body = JSON.stringify(httpParams.json);
-      voyoInfo.contentType = "json";
-    } else if (httpParams.arrayBuffer || httpParams.blob) {
-      priorityHeader.addType("application/octet-stream");
-      req.body = httpParams.arrayBuffer || httpParams.blob;
-      voyoInfo.contentType = "stream";
-    } else if (httpParams.formData) {
-      priorityHeader.addType("application/x-www-form-urlencoded");
-      req.body = httpParams.formData;
-      voyoInfo.contentType = "formData";
-    } else {
-      priorityHeader.addType(this.defaultContentType);
-      req.body = httpParams.body;
+    if (!httpParams.noAutoHeader) {
+      if (httpParams.json) {
+        priorityHeader.addType("application/json");
+        req.body = JSON.stringify(httpParams.json);
+        voyoInfo.contentType = "json";
+      } else if (httpParams.arrayBuffer || httpParams.blob) {
+        priorityHeader.addType("application/octet-stream");
+        req.body = httpParams.arrayBuffer || httpParams.blob;
+        voyoInfo.contentType = "stream";
+      } else if (httpParams.formData) {
+        priorityHeader.addType("application/x-www-form-urlencoded");
+        req.body = httpParams.formData;
+        voyoInfo.contentType = "formData";
+      } else {
+        priorityHeader.addType(this.defaultContentType);
+        req.body = httpParams.body;
+      }
     }
 
     req.headers = Object.assign(

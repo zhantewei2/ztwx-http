@@ -16,8 +16,8 @@ export const arrRunAsync = (
 ) => {
   try {
     arr.length &&
-    arr[0]((nextParams) => arrRunAsync(arr.slice(1), nextParams), params);
-  }catch (e) {
+      arr[0]((nextParams) => arrRunAsync(arr.slice(1), nextParams), params);
+  } catch (e) {
     console.error(e);
   }
 };

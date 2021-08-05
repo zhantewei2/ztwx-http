@@ -16,3 +16,5 @@ export * from "./types/http-base.type";
 export * from "./types/http-params.type";
 
 export * from "./VoyoHttp";
+
+export * from "./utils/simple";

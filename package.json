@@ -1,6 +1,6 @@
 {
   "name": "@voyo/http",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "frontend request library dependency rxjs",
   "module": "lib/index.module.js",
   "types": "types/index.d.ts",
@@ -18,7 +18,7 @@
     "url": "https://github.com/zhantewei2/ztwx-http"
   },
   "dependencies": {
-    "@ztwx/utils": "^1.4.0",
+    "@ztwx/utils": "^1.5.8",
     "rxjs": "^6.5.4"
   },
   "devDependencies": {

@@ -104,23 +104,24 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
           nullishCoalescing(httpParams.queryURIEncode, true),
         );
     }
-    if (!httpParams.noAutoHeader) {
-      if (httpParams.json) {
-        priorityHeader.addType("application/json");
-        req.body = JSON.stringify(httpParams.json);
-        voyoInfo.contentType = "json";
-      } else if (httpParams.arrayBuffer || httpParams.blob) {
+    if (httpParams.json) {
+      !httpParams.noAutoHeader && priorityHeader.addType("application/json");
+      req.body = JSON.stringify(httpParams.json);
+      voyoInfo.contentType = "json";
+    } else if (httpParams.arrayBuffer || httpParams.blob) {
+      !httpParams.noAutoHeader &&
         priorityHeader.addType("application/octet-stream");
-        req.body = httpParams.arrayBuffer || httpParams.blob;
-        voyoInfo.contentType = "stream";
-      } else if (httpParams.formData) {
+      req.body = httpParams.arrayBuffer || httpParams.blob;
+      voyoInfo.contentType = "stream";
+    } else if (httpParams.formData) {
+      !httpParams.noAutoHeader &&
         priorityHeader.addType("application/x-www-form-urlencoded");
-        req.body = httpParams.formData;
-        voyoInfo.contentType = "formData";
-      } else {
+      req.body = httpParams.formData;
+      voyoInfo.contentType = "formData";
+    } else {
+      !httpParams.noAutoHeader &&
         priorityHeader.addType(this.defaultContentType);
-        req.body = httpParams.body;
-      }
+      req.body = httpParams.body;
     }
 
     req.headers = Object.assign(

@@ -154,3 +154,25 @@ export interface VoyoHttpPlugin {
 }
 ```
 
+#### cachePlugin
+
+```javascript
+import { VoyoHttp, VoyoCachePlugin } from "../package/index";
+const http = new VoyoHttp({});
+http.addPlugin(new VoyoCachePlugin({}));
+http.initPlugin();
+
+http
+  .xhr({
+    method: "post",
+    path: "/path",
+    json: {
+      xx: "xxxx",
+    },
+    cacheOpts: {
+      key: "cache-key",
+      expireSeconds: 60,
+    },
+  })
+```
+

@@ -36,19 +36,27 @@ export interface HttpBeforeParams {
   http: Http;
 }
 export type HttpAfterParams = HttpSuccessResult;
-
+export type HttpAfterAllParams = {
+  after: HttpAfterParams;
+  before: HttpBeforeParams;
+};
 export interface HttpWrapperParams {
   http: Http;
   httpObserver: Observable<HttpSuccessResult>;
 }
 
+export type BeForeBreakInfo = Observable<HttpSuccessResult>;
+
 export interface VoyoHttpPlugin {
   priority: number; //sort order
   name: string;
   patchCall?(self: any): void;
-  before?(params: HttpBeforeParams): Promise<void>; // Http hook.
+  before?(params: HttpBeforeParams): Promise<void | BeForeBreakInfo>; // Http hook.
   registryHooks?(params: HttpApplyParams): void; // Http basic life hooks.
-  after?(params: HttpAfterParams): Promise<void>; // Http hook
+  after?(
+    params: HttpAfterParams,
+    beforeParams?: HttpBeforeParams,
+  ): Promise<void>; // Http hook
   wrapper?(params: HttpWrapperParams): Observable<HttpSuccessResult>; // Observer hook;
 }
 
@@ -56,7 +64,7 @@ export class VoyoHttpPluginManager {
   httpPluginHandlers: HttpPluginHandlers = new HttpPluginHandlers();
   pluginList: Array<VoyoHttpPlugin> = [];
   beforeHandlerAsync = new TapableAsync<HttpBeforeParams>();
-  afterHandlerAsync = new TapableAsync<HttpAfterParams>();
+  afterHandlerAsync = new TapableAsync<HttpAfterAllParams>();
   wrapperHandler = new TapableInline<HttpWrapperParams>();
 
   addPlugin(plugin: VoyoHttpPlugin) {
@@ -74,7 +82,9 @@ export class VoyoHttpPluginManager {
       plugin.before &&
         this.beforeHandlerAsync.tapAsync((p) => (plugin as any).before(p));
       plugin.after &&
-        this.afterHandlerAsync.tapAsync((p) => (plugin as any).after(p));
+        this.afterHandlerAsync.tapAsync((p: HttpAfterAllParams) =>
+          (plugin as any).after(p.after, p.before),
+        );
       plugin.registryHooks &&
         plugin.registryHooks({ httpPluginHandlers: this.httpPluginHandlers });
 
@@ -105,12 +115,15 @@ export class VoyoHttpPluginManager {
       this.httpPluginHandlers.errorTrigger.run(p);
     Object.freeze(http.hooks);
 
-    return fromPromise(this.beforeHandlerAsync.run({ http, httpParams })).pipe(
-      mergeMap(() => {
-        const httpObserver = send().pipe(
+    const beforeParams = { http, httpParams };
+    return fromPromise(this.beforeHandlerAsync.run(beforeParams, true)).pipe(
+      mergeMap((md: Observable<HttpSuccessResult> | void) => {
+        const httpObserver = (md || send()).pipe(
           mergeMap((httpResult) =>
             fromPromise(
-              this.afterHandlerAsync.run(httpResult).then(() => httpResult),
+              this.afterHandlerAsync
+                .run({ after: httpResult, before: beforeParams })
+                .then(() => httpResult),
             ),
           ),
         );

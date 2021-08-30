@@ -1,5 +1,5 @@
 import { Observable, Subject } from "rxjs";
-import { HttpInterface, Params2, ValueChangePostParams, ValueChangeResultParams, HttpCacheXhr, HttpMethod, BeforeFn, AfterFn, HttpOpts, HttpRequestLib } from "./interface";
+import { HttpInterface, Params2, ValueChangePostParams, ValueChangeResultParams, HttpCacheXhr, HttpMethod, BeforeFn, AfterFn, Params, HttpOpts, HttpRequestLib } from "./interface";
 import { AllOneHttp } from "./base/all-one-http";
 import { Cache } from "./cache";
 export declare class Http implements HttpInterface {
@@ -42,6 +42,6 @@ export declare class Http implements HttpInterface {
     httpReceiveHook: Subject<ValueChangeResultParams>;
     httpReceiveErrorHook: Subject<ValueChangeResultParams>;
     cacheXhr: (params: HttpCacheXhr) => Observable<any>;
-    xhr: (method: HttpMethod, relativeUrl: string, params?: any, params2?: Params2 | undefined) => Observable<any>;
+    xhr: (method: HttpMethod, relativeUrl: string, params?: Params, params2?: Params2 | undefined) => Observable<any>;
 }
 export declare const http: Http;

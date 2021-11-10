@@ -3,9 +3,9 @@ import { Observer, Subscriber } from "rxjs";
 
 export const xhrAssemblyHeader = (xhr: XMLHttpRequest, headers: HttpHeaders) =>
   headers &&
-  Object.keys(headers).forEach((key: string) =>
-    xhr.setRequestHeader(key, headers[key] as any),
-  );
+  Object.keys(headers).forEach((key: string) => {
+    headers[key] == undefined && xhr.setRequestHeader(key, headers[key] as any);
+  });
 
 /**
  * Do not need include babel async/await runtime polyfill..

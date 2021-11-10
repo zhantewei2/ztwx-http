@@ -1,6 +1,6 @@
 {
   "name": "@voyo/http",
-  "version": "3.3.1",
+  "version": "3.3.3",
   "description": "frontend request library dependency rxjs",
   "module": "lib/index.module.js",
   "types": "types/index.d.ts",
@@ -19,7 +19,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@ztwx/utils": "^1.5.8",
+    "@ztwx/utils": "^1.8.6",
     "rxjs": "^6.5.4"
   },
   "devDependencies": {

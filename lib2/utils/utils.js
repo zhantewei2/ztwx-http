@@ -1,7 +1,7 @@
 export var xhrAssemblyHeader = function (xhr, headers) {
     return headers &&
         Object.keys(headers).forEach(function (key) {
-            return xhr.setRequestHeader(key, headers[key]);
+            headers[key] == undefined && xhr.setRequestHeader(key, headers[key]);
         });
 };
 /**

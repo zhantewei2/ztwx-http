@@ -4,7 +4,8 @@ import { Observer, Subscriber } from "rxjs";
 export const xhrAssemblyHeader = (xhr: XMLHttpRequest, headers: HttpHeaders) =>
   headers &&
   Object.keys(headers).forEach((key: string) => {
-    headers[key] == undefined && xhr.setRequestHeader(key, headers[key] as any);
+    headers[key] !== undefined &&
+      xhr.setRequestHeader(key, headers[key] as any);
   });
 
 /**

@@ -1,19 +1,28 @@
 export declare class Tapable<T> {
-    list: Array<(p: T) => void>;
-    tap(callback: (p: T) => void): void;
+    list: Array<{
+        run: (p: T) => void;
+        priority: number;
+    }>;
+    tap(run: (p: T) => void, priority: number): void;
     run(p: T): void;
 }
 export declare class TapableInline<T> {
-    list: Array<(p: T) => T>;
-    tap(callback: (p: T) => T): void;
+    list: Array<{
+        run: (p: T) => T;
+        priority: number;
+    }>;
+    tap(run: (p: T) => T, priority: number): void;
     runInline(p: T): T;
 }
 export interface TapableAsyncRun<T> {
     (p: T): Promise<any>;
 }
 export declare class TapableAsync<T> {
-    list: Array<TapableAsyncRun<T>>;
-    tapAsync(callback: TapableAsyncRun<T>): void;
+    list: Array<{
+        run: TapableAsyncRun<T>;
+        priority: number;
+    }>;
+    tapAsync(callback: TapableAsyncRun<T>, priority: number): void;
     /**
      * prevent next when @return false
      * @param p

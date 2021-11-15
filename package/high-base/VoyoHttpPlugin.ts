@@ -71,31 +71,44 @@ export class VoyoHttpPluginManager {
     if (!this.pluginList.find((i) => i.name === plugin.name))
       this.pluginList.push(plugin);
   }
-
+  addPluginDynamic(plugin: VoyoHttpPlugin) {
+    this.pluginList.push(plugin);
+    this.flatPlugin(plugin);
+  }
   removePlugin(name: string) {
     const existsIndex = this.pluginList.findIndex((i) => i.name === name);
     existsIndex !== undefined && this.pluginList.splice(existsIndex, 1);
   }
-  initPlugin() {
-    this.pluginList.sort((pre, next) => next.priority - pre.priority);
-    this.pluginList.forEach((plugin) => {
-      plugin.before &&
-        this.beforeHandlerAsync.tapAsync((p) => (plugin as any).before(p));
-      plugin.after &&
-        this.afterHandlerAsync.tapAsync((p: HttpAfterAllParams) =>
-          (plugin as any).after(p.after, p.before),
-        );
-      plugin.registryHooks &&
-        plugin.registryHooks({ httpPluginHandlers: this.httpPluginHandlers });
+  flatPlugin(plugin: VoyoHttpPlugin) {
+    plugin.before &&
+      this.beforeHandlerAsync.tapAsync(
+        (p) => (plugin as any).before(p),
+        plugin.priority,
+      );
+    plugin.after &&
+      this.afterHandlerAsync.tapAsync(
+        (p: HttpAfterAllParams) => (plugin as any).after(p.after, p.before),
+        plugin.priority,
+      );
+    plugin.registryHooks &&
+      plugin.registryHooks({ httpPluginHandlers: this.httpPluginHandlers });
 
-      if (plugin.wrapper) {
-        this.wrapperHandler.tap((p) => ({
+    if (plugin.wrapper) {
+      this.wrapperHandler.tap(
+        (p) => ({
           http: p.http,
           httpObserver: (plugin as any).wrapper(p),
-        }));
-      }
-      plugin.patchCall && plugin.patchCall(this);
-    });
+        }),
+        plugin.priority,
+      );
+    }
+    plugin.patchCall && plugin.patchCall(this);
+  }
+
+  initPlugin() {
+    this.pluginList
+      .sort((pre, next) => next.priority - pre.priority)
+      .forEach((plugin) => this.flatPlugin(plugin));
   }
   wrapperHttp(
     http: Http,

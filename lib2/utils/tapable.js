@@ -2,12 +2,13 @@ import { arrForEachAsync } from "./utils";
 var Tapable = /** @class */ (function () {
     function Tapable() {
     }
-    Tapable.prototype.tap = function (callback) {
+    Tapable.prototype.tap = function (run, priority) {
         this.list = this.list || [];
-        this.list.push(callback);
+        this.list.push({ run: run, priority: priority });
+        this.list.sort(function (pre, next) { return next.priority - pre.priority; });
     };
     Tapable.prototype.run = function (p) {
-        this.list && this.list.forEach(function (run) { return run(p); });
+        this.list && this.list.forEach(function (i) { return i.run(p); });
     };
     return Tapable;
 }());
@@ -15,16 +16,17 @@ export { Tapable };
 var TapableInline = /** @class */ (function () {
     function TapableInline() {
     }
-    TapableInline.prototype.tap = function (callback) {
+    TapableInline.prototype.tap = function (run, priority) {
         this.list = this.list || [];
-        this.list.push(callback);
+        this.list.push({ run: run, priority: priority });
+        this.list.sort(function (pre, next) { return next.priority - pre.priority; });
     };
     TapableInline.prototype.runInline = function (p) {
         if (!this.list)
             return p;
         for (var _i = 0, _a = this.list; _i < _a.length; _i++) {
-            var run = _a[_i];
-            p = run(p);
+            var i = _a[_i];
+            p = i.run(p);
         }
         return p;
     };
@@ -34,9 +36,10 @@ export { TapableInline };
 var TapableAsync = /** @class */ (function () {
     function TapableAsync() {
     }
-    TapableAsync.prototype.tapAsync = function (callback) {
+    TapableAsync.prototype.tapAsync = function (callback, priority) {
         this.list = this.list || [];
-        this.list.push(callback);
+        this.list.push({ run: callback, priority: priority });
+        this.list.sort(function (pre, next) { return next.priority - pre.priority; });
     };
     /**
      * prevent next when @return false
@@ -49,7 +52,8 @@ var TapableAsync = /** @class */ (function () {
             ? Promise.resolve(undefined)
             : new Promise(function (resolve, reject) {
                 return arrForEachAsync(_this.list.map(function (i) { return function (next) {
-                    return i(p)
+                    return i
+                        .run(p)
                         .then(function (md) { return (md && mdBreak ? resolve(md) : next()); })
                         .catch(reject);
                 }; }), function () { return resolve(undefined); });

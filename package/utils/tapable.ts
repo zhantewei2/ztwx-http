@@ -1,26 +1,28 @@
 import { arrForEachAsync, arrRunAsync } from "./utils";
 
 export class Tapable<T> {
-  list: Array<(p: T) => void>;
-  tap(callback: (p: T) => void) {
+  list: Array<{ run: (p: T) => void; priority: number }>;
+  tap(run: (p: T) => void, priority: number) {
     this.list = this.list || [];
-    this.list.push(callback);
+    this.list.push({ run, priority });
+    this.list.sort((pre, next) => next.priority - pre.priority);
   }
 
   run(p: T) {
-    this.list && this.list.forEach((run) => run(p));
+    this.list && this.list.forEach((i) => i.run(p));
   }
 }
 export class TapableInline<T> {
-  list: Array<(p: T) => T>;
-  tap(callback: (p: T) => T) {
+  list: Array<{ run: (p: T) => T; priority: number }>;
+  tap(run: (p: T) => T, priority: number) {
     this.list = this.list || [];
-    this.list.push(callback);
+    this.list.push({ run, priority });
+    this.list.sort((pre, next) => next.priority - pre.priority);
   }
   runInline(p: T): T {
     if (!this.list) return p;
-    for (const run of this.list) {
-      p = run(p);
+    for (const i of this.list) {
+      p = i.run(p);
     }
     return p;
   }
@@ -31,10 +33,11 @@ export interface TapableAsyncRun<T> {
 }
 
 export class TapableAsync<T> {
-  list: Array<TapableAsyncRun<T>>;
-  tapAsync(callback: TapableAsyncRun<T>) {
+  list: Array<{ run: TapableAsyncRun<T>; priority: number }>;
+  tapAsync(callback: TapableAsyncRun<T>, priority: number) {
     this.list = this.list || [];
-    this.list.push(callback);
+    this.list.push({ run: callback, priority });
+    this.list.sort((pre, next) => next.priority - pre.priority);
   }
 
   /**
@@ -49,7 +52,8 @@ export class TapableAsync<T> {
           arrForEachAsync(
             this.list.map(
               (i) => (next) =>
-                i(p)
+                i
+                  .run(p)
                   .then((md) => (md && mdBreak ? resolve(md) : next()))
                   .catch(reject),
             ),

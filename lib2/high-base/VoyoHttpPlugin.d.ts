@@ -43,7 +43,9 @@ export declare class VoyoHttpPluginManager {
     afterHandlerAsync: TapableAsync<HttpAfterAllParams>;
     wrapperHandler: TapableInline<HttpWrapperParams>;
     addPlugin(plugin: VoyoHttpPlugin): void;
+    addPluginDynamic(plugin: VoyoHttpPlugin): void;
     removePlugin(name: string): void;
+    flatPlugin(plugin: VoyoHttpPlugin): void;
     initPlugin(): void;
     wrapperHttp(http: Http, httpParams: HttpParams, send: () => Observable<HttpSuccessResult>): Observable<HttpSuccessResult>;
 }

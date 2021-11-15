@@ -25,30 +25,34 @@ var VoyoHttpPluginManager = /** @class */ (function () {
         if (!this.pluginList.find(function (i) { return i.name === plugin.name; }))
             this.pluginList.push(plugin);
     };
+    VoyoHttpPluginManager.prototype.addPluginDynamic = function (plugin) {
+        this.pluginList.push(plugin);
+        this.flatPlugin(plugin);
+    };
     VoyoHttpPluginManager.prototype.removePlugin = function (name) {
         var existsIndex = this.pluginList.findIndex(function (i) { return i.name === name; });
         existsIndex !== undefined && this.pluginList.splice(existsIndex, 1);
     };
+    VoyoHttpPluginManager.prototype.flatPlugin = function (plugin) {
+        plugin.before &&
+            this.beforeHandlerAsync.tapAsync(function (p) { return plugin.before(p); }, plugin.priority);
+        plugin.after &&
+            this.afterHandlerAsync.tapAsync(function (p) { return plugin.after(p.after, p.before); }, plugin.priority);
+        plugin.registryHooks &&
+            plugin.registryHooks({ httpPluginHandlers: this.httpPluginHandlers });
+        if (plugin.wrapper) {
+            this.wrapperHandler.tap(function (p) { return ({
+                http: p.http,
+                httpObserver: plugin.wrapper(p),
+            }); }, plugin.priority);
+        }
+        plugin.patchCall && plugin.patchCall(this);
+    };
     VoyoHttpPluginManager.prototype.initPlugin = function () {
         var _this = this;
-        this.pluginList.sort(function (pre, next) { return next.priority - pre.priority; });
-        this.pluginList.forEach(function (plugin) {
-            plugin.before &&
-                _this.beforeHandlerAsync.tapAsync(function (p) { return plugin.before(p); });
-            plugin.after &&
-                _this.afterHandlerAsync.tapAsync(function (p) {
-                    return plugin.after(p.after, p.before);
-                });
-            plugin.registryHooks &&
-                plugin.registryHooks({ httpPluginHandlers: _this.httpPluginHandlers });
-            if (plugin.wrapper) {
-                _this.wrapperHandler.tap(function (p) { return ({
-                    http: p.http,
-                    httpObserver: plugin.wrapper(p),
-                }); });
-            }
-            plugin.patchCall && plugin.patchCall(_this);
-        });
+        this.pluginList
+            .sort(function (pre, next) { return next.priority - pre.priority; })
+            .forEach(function (plugin) { return _this.flatPlugin(plugin); });
     };
     VoyoHttpPluginManager.prototype.wrapperHttp = function (http, httpParams, send) {
         var _this = this;

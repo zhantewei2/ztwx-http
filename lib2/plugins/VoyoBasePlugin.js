@@ -1,7 +1,6 @@
 import { queryparams } from "@ztwx/utils/lib/url";
 import { joinUrl, nullishCoalescing } from "../utils/utils";
 import { PriorityHeaders } from "./PriorityHeaders";
-import { map } from "rxjs/operators";
 var VoyoBasePlugin = /** @class */ (function () {
     function VoyoBasePlugin() {
         this.name = "voyo-base-plugin";
@@ -10,6 +9,20 @@ var VoyoBasePlugin = /** @class */ (function () {
         this.withCredentials = true;
         this.defaultContentType = "application/json";
         this.defaultResponseType = "json";
+        /**
+         * @override
+         * @param httpObserver
+         */
+        // wrapper({ httpObserver }: HttpWrapperParams): Observable<HttpSuccessResult> {
+        //   return httpObserver.pipe(
+        //     map((httpSuccessResult) => {
+        //       const res = httpSuccessResult.http.res;
+        //       httpSuccessResult.statusCode = res.status;
+        //       httpSuccessResult.result = res.result;
+        //       return httpSuccessResult;
+        //     }),
+        //   );
+        // }
     }
     /**
      * @override
@@ -98,20 +111,13 @@ var VoyoBasePlugin = /** @class */ (function () {
                     console.debug("Failed to parse JSON format.", e);
                 }
             }
-        });
+        }, this.priority);
     };
-    /**
-     * @override
-     * @param httpObserver
-     */
-    VoyoBasePlugin.prototype.wrapper = function (_a) {
-        var httpObserver = _a.httpObserver;
-        return httpObserver.pipe(map(function (httpSuccessResult) {
-            var res = httpSuccessResult.http.res;
-            httpSuccessResult.statusCode = res.status;
-            httpSuccessResult.result = res.result;
-            return httpSuccessResult;
-        }));
+    VoyoBasePlugin.prototype.after = function (successResult, beforeParams) {
+        var res = successResult.http.res;
+        successResult.statusCode = res.status;
+        successResult.result = res.result;
+        return Promise.resolve();
     };
     return VoyoBasePlugin;
 }());

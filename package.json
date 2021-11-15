@@ -1,11 +1,11 @@
 {
   "name": "@voyo/http",
-  "version": "3.3.4",
+  "version": "3.4.0",
   "description": "frontend request library dependency rxjs",
   "module": "lib/index.module.js",
   "types": "types/index.d.ts",
   "scripts": {
-    "package": "tsc --outDir lib -d",
+    "package": "npm run build:lib & npm run build:ts",
     "test-dev": "cross-env NODE_ENV=development webpack serve --config  test/webpack.config.js",
     "build:lib": "webpack --config package/webpack.config.js",
     "build:ts": "tsc --outDir lib2 -d",

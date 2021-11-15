@@ -124,6 +124,13 @@ http.xhr({
   console.log(result);
 })
 ```
+API
+---
+- xhr
+- addPlugin
+- addPluginDynamic
+- initPlugin
+- setTransmitter
 
 
 Plugin
@@ -175,4 +182,6 @@ http
     },
   })
 ```
+
+
 

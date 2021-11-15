@@ -1,10 +1,9 @@
-import { HttpApplyParams, HttpBeforeParams, HttpWrapperParams, VoyoHttpPlugin } from "../high-base/VoyoHttpPlugin";
+import { HttpAfterParams, HttpApplyParams, HttpBeforeParams, VoyoHttpPlugin } from "../high-base/VoyoHttpPlugin";
 import { HttpHeaders } from "../types/http-base.type";
 import { HighHttp } from "../high-base/HighHttp";
 import { PriorityHeaderRecord, PriorityHeaders } from "./PriorityHeaders";
-import { HttpParams, HttpSuccessResult } from "../types/http-params.type";
+import { HttpParams } from "../types/http-params.type";
 import { Request } from "../base/Request";
-import { Observable } from "rxjs";
 export declare type HttpResult = BodyInit | Record<string, any>;
 declare module "../types/http-params.type" {
     interface HttpParams {
@@ -60,9 +59,5 @@ export declare class VoyoBasePlugin implements VoyoHttpPlugin {
      * @param httpPluginHandlers
      */
     registryHooks({ httpPluginHandlers }: HttpApplyParams): void;
-    /**
-     * @override
-     * @param httpObserver
-     */
-    wrapper({ httpObserver }: HttpWrapperParams): Observable<HttpSuccessResult>;
+    after(successResult: HttpAfterParams, beforeParams?: HttpBeforeParams): Promise<void>;
 }

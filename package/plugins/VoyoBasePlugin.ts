@@ -152,21 +152,29 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
           console.debug("Failed to parse JSON format.", e);
         }
       }
-    });
+    }, this.priority);
   }
-
+  after(
+    successResult: HttpAfterParams,
+    beforeParams?: HttpBeforeParams,
+  ): Promise<void> {
+    const res = successResult.http.res;
+    successResult.statusCode = res.status;
+    successResult.result = res.result;
+    return Promise.resolve();
+  }
   /**
    * @override
    * @param httpObserver
    */
-  wrapper({ httpObserver }: HttpWrapperParams): Observable<HttpSuccessResult> {
-    return httpObserver.pipe(
-      map((httpSuccessResult) => {
-        const res = httpSuccessResult.http.res;
-        httpSuccessResult.statusCode = res.status;
-        httpSuccessResult.result = res.result;
-        return httpSuccessResult;
-      }),
-    );
-  }
+  // wrapper({ httpObserver }: HttpWrapperParams): Observable<HttpSuccessResult> {
+  //   return httpObserver.pipe(
+  //     map((httpSuccessResult) => {
+  //       const res = httpSuccessResult.http.res;
+  //       httpSuccessResult.statusCode = res.status;
+  //       httpSuccessResult.result = res.result;
+  //       return httpSuccessResult;
+  //     }),
+  //   );
+  // }
 }

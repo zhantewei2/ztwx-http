@@ -15,11 +15,12 @@ declare module "../types/http-params.type" {
     cacheOpts?: {
       key: string; //cache key
       expireSeconds?: number; //default 0 for never expire.
+      shouldCache?: ShouldCache;
       // onDestroy?: (params: HttpParams) => boolean; Not implement.
     };
   }
 }
-
+export type ShouldCache = (result: HttpAfterParams) => boolean;
 export interface VoyoCachePluginOpts {
   maxCount?: number;
   controllerCount?: number;
@@ -29,6 +30,7 @@ export interface VoyoCachePluginOpts {
    *  value of 0 indicates that it will never expire.
    */
   defaultExpireSeconds?: number;
+  shouldCache?: ShouldCache;
 }
 export interface CacheHttp {
   res: Response;
@@ -45,19 +47,24 @@ export class VoyoCachePlugin implements VoyoHttpPlugin {
   priority = 99;
   defaultExpireSeconds: number;
   limitStore: LimitStore<VoyoCacheStoreVal>;
+  shouldCache: ShouldCache | undefined;
+
   getNowDate() {
     return Math.round(Date.now() / 1000);
   }
+
   constructor({
     maxCount,
     controllerCount,
     defaultExpireSeconds,
+    shouldCache,
   }: VoyoCachePluginOpts) {
     this.defaultExpireSeconds = defaultExpireSeconds || 0;
     this.limitStore = new LimitStore<VoyoCacheStoreVal>(
       maxCount,
       controllerCount,
     );
+    this.shouldCache = shouldCache;
   }
   isExpire(key: string, expireDate: number): boolean {
     if (expireDate === 0) return false;
@@ -89,6 +96,12 @@ export class VoyoCachePlugin implements VoyoHttpPlugin {
     { httpParams: { cacheOpts }, http }: HttpBeforeParams,
   ) {
     if (!cacheOpts) return Promise.resolve();
+
+    if (
+      (this.shouldCache && !this.shouldCache(result)) ||
+      (cacheOpts.shouldCache && !cacheOpts.shouldCache(result))
+    )
+      return Promise.resolve();
 
     this.limitStore.add(cacheOpts.key, {
       expireDate:

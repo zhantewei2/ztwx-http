@@ -3,11 +3,12 @@ import { LimitStore } from "./limitStore";
 import { of } from "rxjs";
 var VoyoCachePlugin = /** @class */ (function () {
     function VoyoCachePlugin(_a) {
-        var maxCount = _a.maxCount, controllerCount = _a.controllerCount, defaultExpireSeconds = _a.defaultExpireSeconds;
+        var maxCount = _a.maxCount, controllerCount = _a.controllerCount, defaultExpireSeconds = _a.defaultExpireSeconds, shouldCache = _a.shouldCache;
         this.name = "voyo-cache-plugin";
         this.priority = 99;
         this.defaultExpireSeconds = defaultExpireSeconds || 0;
         this.limitStore = new LimitStore(maxCount, controllerCount);
+        this.shouldCache = shouldCache;
     }
     VoyoCachePlugin.prototype.getNowDate = function () {
         return Math.round(Date.now() / 1000);
@@ -38,6 +39,9 @@ var VoyoCachePlugin = /** @class */ (function () {
     VoyoCachePlugin.prototype.after = function (result, _a) {
         var cacheOpts = _a.httpParams.cacheOpts, http = _a.http;
         if (!cacheOpts)
+            return Promise.resolve();
+        if ((this.shouldCache && !this.shouldCache(result)) ||
+            (cacheOpts.shouldCache && !cacheOpts.shouldCache(result)))
             return Promise.resolve();
         this.limitStore.add(cacheOpts.key, {
             expireDate: cacheOpts.expireSeconds == null

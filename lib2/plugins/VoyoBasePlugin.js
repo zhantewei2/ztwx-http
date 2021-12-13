@@ -80,8 +80,8 @@ var VoyoBasePlugin = /** @class */ (function () {
             voyoInfo.contentType = "stream";
         }
         else if (httpParams.formData) {
-            !httpParams.noAutoHeader &&
-                priorityHeader.addType("application/x-www-form-urlencoded");
+            // !httpParams.noAutoHeader &&
+            //   priorityHeader.addType("application/x-www-form-urlencoded");
             req.body = httpParams.formData;
             voyoInfo.contentType = "formData";
         }

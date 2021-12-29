@@ -43,6 +43,7 @@ export type HttpAfterAllParams = {
 export interface HttpWrapperParams {
   http: Http;
   httpObserver: Observable<HttpSuccessResult>;
+  httpParams: HttpParams;
 }
 
 export type BeForeBreakInfo = Observable<HttpSuccessResult>;
@@ -98,6 +99,7 @@ export class VoyoHttpPluginManager {
         (p) => ({
           http: p.http,
           httpObserver: (plugin as any).wrapper(p),
+          httpParams: p.httpParams,
         }),
         plugin.priority,
       );
@@ -140,7 +142,7 @@ export class VoyoHttpPluginManager {
             ),
           ),
         );
-        return this.wrapperHandler.runInline({ http, httpObserver })
+        return this.wrapperHandler.runInline({ http, httpObserver, httpParams })
           .httpObserver;
       }),
     );

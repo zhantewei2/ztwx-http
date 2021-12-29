@@ -44,6 +44,7 @@ var VoyoHttpPluginManager = /** @class */ (function () {
             this.wrapperHandler.tap(function (p) { return ({
                 http: p.http,
                 httpObserver: plugin.wrapper(p),
+                httpParams: p.httpParams,
             }); }, plugin.priority);
         }
         plugin.patchCall && plugin.patchCall(this);
@@ -80,7 +81,7 @@ var VoyoHttpPluginManager = /** @class */ (function () {
                     .run({ after: httpResult, before: beforeParams })
                     .then(function () { return httpResult; }));
             }));
-            return _this.wrapperHandler.runInline({ http: http, httpObserver: httpObserver })
+            return _this.wrapperHandler.runInline({ http: http, httpObserver: httpObserver, httpParams: httpParams })
                 .httpObserver;
         }));
     };

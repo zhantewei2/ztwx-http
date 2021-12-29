@@ -25,6 +25,7 @@ export declare type HttpAfterAllParams = {
 export interface HttpWrapperParams {
     http: Http;
     httpObserver: Observable<HttpSuccessResult>;
+    httpParams: HttpParams;
 }
 export declare type BeForeBreakInfo = Observable<HttpSuccessResult>;
 export interface VoyoHttpPlugin {

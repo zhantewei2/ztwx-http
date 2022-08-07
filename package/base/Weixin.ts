@@ -7,6 +7,10 @@ import { HttpSuccessResult } from "../types/http-params.type";
 declare const wx: any;
 
 export class Weixin implements HttpTransmitter {
+  tool: any;
+  constructor(tool: any = wx) {
+    this.tool = tool;
+  }
   /**
    * Making an Ajax request
    */
@@ -56,7 +60,7 @@ export class Weixin implements HttpTransmitter {
            * request complete
            */
 
-          const task: any = wx.request({
+          const task: any = this.tool.request({
             ...requestParams,
             method: req.method,
             url: req.url,

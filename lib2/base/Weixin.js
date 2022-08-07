@@ -2,12 +2,15 @@ import { __assign } from "tslib";
 import { arrRunAsync } from "../utils/utils";
 import { Observable } from "rxjs";
 var Weixin = /** @class */ (function () {
-    function Weixin() {
+    function Weixin(tool) {
+        if (tool === void 0) { tool = wx; }
+        this.tool = tool;
     }
     /**
      * Making an Ajax request
      */
     Weixin.prototype.start = function (http) {
+        var _this = this;
         return new Observable(function (ob) {
             var req = http.req, res = http.res, hooks = http.hooks;
             var requestParams = {};
@@ -55,7 +58,7 @@ var Weixin = /** @class */ (function () {
                     /**
                      * request complete
                      */
-                    var task = wx.request(__assign(__assign({}, requestParams), { method: req.method, url: req.url, header: req.headers || {}, data: req.body, success: function (result) {
+                    var task = _this.tool.request(__assign(__assign({}, requestParams), { method: req.method, url: req.url, header: req.headers || {}, data: req.body, success: function (result) {
                             res.status = result.statusCode;
                             res.result = result.data;
                             res.headers = result.header;

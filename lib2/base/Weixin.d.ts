@@ -2,6 +2,8 @@ import { Http, HttpTransmitter } from "./Http";
 import { Observable } from "rxjs";
 import { HttpSuccessResult } from "../types/http-params.type";
 export declare class Weixin implements HttpTransmitter {
+    tool: any;
+    constructor(tool?: any);
     /**
      * Making an Ajax request
      */

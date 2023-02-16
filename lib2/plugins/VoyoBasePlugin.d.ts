@@ -20,6 +20,7 @@ declare module "../types/http-params.type" {
         responseType?: XMLHttpRequestResponseType;
         withCredentials?: boolean;
         noAutoHeader?: boolean;
+        uniAppParams?: Record<string, any>;
     }
     interface HttpSuccessResult {
         result?: HttpResult;

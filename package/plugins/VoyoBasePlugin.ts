@@ -32,6 +32,7 @@ declare module "../types/http-params.type" {
     responseType?: XMLHttpRequestResponseType;
     withCredentials?: boolean;
     noAutoHeader?: boolean;
+    uniAppParams?: Record<string, any>; //uniApp request 其他params.
   }
   interface HttpSuccessResult {
     result?: HttpResult;
@@ -68,8 +69,10 @@ export class VoyoBasePlugin implements VoyoHttpPlugin {
     };
     highHttp.setWithCredentials = (v: boolean) => (this.withCredentials = v);
   }
+
   defineResponseType(httpParams: HttpParams, req: Request) {
     req.responseType = httpParams.responseType || this.defaultResponseType;
+    if (httpParams.uniAppParams) req.requestParams = httpParams.uniAppParams;
   }
   defineRequestUrl(httpParams: HttpParams, req: Request) {
     req.url = req.url || joinUrl(this.hostAddress, httpParams.path);

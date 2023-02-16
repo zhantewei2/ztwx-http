@@ -17,7 +17,7 @@ export class Weixin implements HttpTransmitter {
   start(http: Http): Observable<HttpSuccessResult> {
     return new Observable<HttpSuccessResult>((ob) => {
       const { req, res, hooks } = http;
-      const requestParams: any = {};
+      const requestParams: any = http.req.requestParams || {};
       arrRunAsync([
         (next) => {
           /**

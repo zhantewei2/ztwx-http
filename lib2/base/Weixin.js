@@ -13,7 +13,7 @@ var Weixin = /** @class */ (function () {
         var _this = this;
         return new Observable(function (ob) {
             var req = http.req, res = http.res, hooks = http.hooks;
-            var requestParams = {};
+            var requestParams = http.req.requestParams || {};
             arrRunAsync([
                 function (next) {
                     /**

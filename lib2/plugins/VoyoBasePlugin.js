@@ -40,6 +40,8 @@ var VoyoBasePlugin = /** @class */ (function () {
     };
     VoyoBasePlugin.prototype.defineResponseType = function (httpParams, req) {
         req.responseType = httpParams.responseType || this.defaultResponseType;
+        if (httpParams.uniAppParams)
+            req.requestParams = httpParams.uniAppParams;
     };
     VoyoBasePlugin.prototype.defineRequestUrl = function (httpParams, req) {
         req.url = req.url || joinUrl(this.hostAddress, httpParams.path);

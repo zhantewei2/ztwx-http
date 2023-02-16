@@ -10,4 +10,5 @@ export declare class Request {
     xhr?: XMLHttpRequest;
     voyoInfo?: any;
     mergeInfo?: any;
+    requestParams?: Record<string, any>;
 }

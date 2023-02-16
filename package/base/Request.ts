@@ -11,4 +11,5 @@ export class Request {
   xhr?: XMLHttpRequest;
   voyoInfo?: any; // addition info of voyo.
   mergeInfo?: any; //addition info.
+  requestParams?: Record<string, any>; //addition requestParams for wx|uniApp.
 }
